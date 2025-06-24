@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Random YouTube Video</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random YouTube Video Viewer</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <h1>🎥 Random YouTube Video Viewer</h1>
-  
-  <div id="videoContainer">
-    <iframe id="youtubePlayer" width="640" height="360"
-            src=""
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-    </iframe>
+  <button onclick="playRandomVideo()">Play Random Clint Clip</button>
+
+  <div class="video-wrapper">
+    <div id="player"></div>
   </div>
-  
-  <button onclick="playRandomVideo()">Play Random Video</button>
+
+  <div id="videoInfo">
+    <h2 id="videoTitle">Loading...</h2>
+    <p id="videoDescription"></p>
+  </div>
 
   <script src="script.js"></script>
 </body>
