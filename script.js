@@ -2,20 +2,18 @@ let player;
 let playerReady = false;
 
 const videoList = [
-"VaLYCJq-HvM",
-"Dfzqr6b9nxM",
-"zlH4ZvEDopA"
+  "VaLYCJq-HvM",
+  "Dfzqr6b9nxM",
+  "zlH4ZvEDopA"
 ];
 
-// Called when API is ready
 function onYouTubeIframeAPIReady() {
-  const randomVideo = getRandomVideo();
+  const video = getRandomVideo();
   player = new YT.Player("player", {
-    videoId: randomVideo.url,
+    videoId: video,
     events: {
       onReady: () => {
         playerReady = true;
-        updateVideoInfo(randomVideo);
       },
       onStateChange: onPlayerStateChange
     },
@@ -27,30 +25,22 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-// Pick a random video from the list
 function getRandomVideo() {
-  const randomIndex = Math.floor(Math.random() * videoList.length);
-  return videoList[randomIndex];
+  return videoList[Math.floor(Math.random() * videoList.length)];
 }
 
-// Update title and description
-function updateVideoInfo(video) {
-  document.getElementById("videoTitle").textContent = video.title;
-  document.getElementById("videoDescription").textContent = video.description;
+function playRandomVideo() {
+  if (!playerReady) return;
+  const video = getRandomVideo();
+  player.loadVideoById(video);
 }
 
-// Called when state changes (e.g. ended)
 function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.ENDED) {
     playRandomVideo();
   }
 }
 
-// Called by button
-function playRandomVideo() {
-  if (!playerReady) return; // Don't run if not ready
-
-  const video = getRandomVideo();
-  player.loadVideoById(video.url);
-  updateVideoInfo(video);
-}
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("randomBtn").addEventListener("click", playRandomVideo);
+});

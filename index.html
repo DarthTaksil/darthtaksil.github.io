@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Random YouTube Video Viewer</title>
+  <title>Theater Mode YouTube Viewer</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <button onclick="playRandomVideo()">Play Random Clint Clip</button>
-
-  <div class="video-wrapper">
-    <div id="player"></div>
-  </div>
-
-  <div id="videoInfo">
-    <h2 id="videoTitle">Loading...</h2>
-    <p id="videoDescription"></p>
+  <div class="theater-container">
+    <button id="randomBtn">Play Random Clint Clip</button>
+    <div id="playerWrapper">
+      <div id="player"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
