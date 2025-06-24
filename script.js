@@ -1,12 +1,6 @@
 let player;
 let playerReady = false;
 
-const videoList = [
-  "VaLYCJq-HvM",
-  "Dfzqr6b9nxM",
-  "zlH4ZvEDopA"
-];
-
 function onYouTubeIframeAPIReady() {
   const video = getRandomVideo();
   player = new YT.Player("player", {
