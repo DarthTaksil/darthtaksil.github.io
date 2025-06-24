@@ -8,6 +8,20 @@ html, body {
   overflow: hidden;
 }
 
+#videoCounter {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.7);
+  color: #585858;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  z-index: 9999;
+  user-select: none;
+}
+
 .theater-container {
   display: flex;
   flex-direction: column;
@@ -35,6 +49,7 @@ html, body {
 
 button {
   margin-top: 20px;
+  margin-bottom: 10px;
   padding: 12px 24px;
   font-size: 1.2em;
   background-color: #008080;

@@ -38,3 +38,14 @@ function onPlayerStateChange(event) {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("randomBtn").addEventListener("click", playRandomVideo);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("randomBtn").addEventListener("click", playRandomVideo);
+  
+  const counter = document.getElementById("videoCounter");
+  if (typeof videoList !== "undefined" && Array.isArray(videoList)) {
+    counter.textContent = `Total Clips: ${videoList.length}`;
+  } else {
+    counter.textContent = `Total Clips: 0`;
+  }
+});
