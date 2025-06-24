@@ -2,21 +2,9 @@ let player;
 let playerReady = false;
 
 const videoList = [
-  {
-    url: "dQw4w9WgXcQ",
-    title: "Never Gonna Give You Up",
-    description: "The ultimate internet classic from Rick Astley."
-  },
-  {
-    url: "Zi_XLOBDo_Y",
-    title: "Michael Jackson – Billie Jean",
-    description: "Live Motown 25 performance that changed pop music forever."
-  },
-  {
-    url: "lTRiuFIWV54",
-    title: "Mario Kart 8 Deluxe Soundtrack",
-    description: "Upbeat tunes from the world of Nintendo racing."
-  }
+"VaLYCJq-HvM",
+"Dfzqr6b9nxM",
+"zlH4ZvEDopA"
 ];
 
 // Called when API is ready
