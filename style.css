@@ -47,10 +47,26 @@ html, body {
   border: none;
 }
 
-button {
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* space between buttons */
+  flex-wrap: wrap; /* wrap on smaller screens */
+  margin-top: 20px;
+}
+
+.button-row button {
   margin-top: 20px;
   margin-bottom: 10px;
   padding: 12px 24px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Default button */
+button {
   font-size: 1.2em;
   background-color: #008080;
   color: white;
@@ -64,11 +80,142 @@ button:hover {
   background-color: #0d4646;
 }
 
+/* Gold Clips button */
 #goldBtn {
-  background-color: #e9c009;
+  background-color: #dcad29;
   color: #070707;
 }
 
 #goldBtn:hover {
-  background-color: #a3943e; /* slightly darker gold on hover */
+  background-color: #645912; /* slightly darker gold on hover */
+}
+
+.top-bar {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  z-index: 9999;
+}
+
+.top-bar a {
+  text-decoration: none;
+}
+
+/* Supporters Button on index */
+.top-link {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.7);
+  padding: 6px 12px;
+  border-radius: 4px;
+
+  color: #585858;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.top-link:hover {
+  color: #0d0d0d;
+  background: gold;
+}
+
+
+/* Style for all Hyperlinks */
+.kofi-link:hover img {
+  transform: scale(1.05);
+}
+
+a {
+  color: #ffd700; /* gold */
+  text-decoration: none; /* optional: removes underline */
+}
+
+a:hover {
+  color: #9b934b; /* lighter gold on hover */
+  text-decoration: underline; /* optional */
+}
+
+a:visited {
+  color: #c6a700; /* darker gold if visited */
+}
+
+a:active {
+  color: #ffeb3b;
+}
+
+/* Styling for supporters.html */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #0d0d0d;
+  font-family: Arial, sans-serif;
+  color: #f1f1f1;
+  overflow-x: hidden;
+}
+
+.theater-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.supporter-box {
+  max-width: 800px;
+  width: 100%;
+  padding: 40px;
+  background-color: #1c1c1c;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+.supporter-box h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: gold;
+}
+
+.supporter-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.supporter-list li {
+  padding: 6px 0;
+  font-size: 1.1em;
+  border-bottom: 1px solid #333;
+}
+
+a {
+  color: #ffd700;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.back-button {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 10px 20px;
+  background-color: #0f0f0f;
+  color: white;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #3a3a3a;
 }
