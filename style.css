@@ -63,3 +63,12 @@ button {
 button:hover {
   background-color: #0d4646;
 }
+
+#goldBtn {
+  background-color: #e9c009;
+  color: #070707;
+}
+
+#goldBtn:hover {
+  background-color: #a3943e; /* slightly darker gold on hover */
+}

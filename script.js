@@ -1,14 +1,13 @@
 let player;
 let playerReady = false;
+let currentVideoList = videoList; // default to main list
 
 function onYouTubeIframeAPIReady() {
   const video = getRandomVideo();
   player = new YT.Player("player", {
     videoId: video,
     events: {
-      onReady: () => {
-        playerReady = true;
-      },
+      onReady: () => { playerReady = true; },
       onStateChange: onPlayerStateChange
     },
     playerVars: {
@@ -20,7 +19,8 @@ function onYouTubeIframeAPIReady() {
 }
 
 function getRandomVideo() {
-  return videoList[Math.floor(Math.random() * videoList.length)];
+  if (!currentVideoList || currentVideoList.length === 0) return "";
+  return currentVideoList[Math.floor(Math.random() * currentVideoList.length)];
 }
 
 function playRandomVideo() {
@@ -36,16 +36,20 @@ function onPlayerStateChange(event) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("randomBtn").addEventListener("click", playRandomVideo);
-});
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    currentVideoList = videoList;
+    playRandomVideo();
+  });
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("randomBtn").addEventListener("click", playRandomVideo);
+  document.getElementById("goldBtn").addEventListener("click", () => {
+    currentVideoList = goldVideoList;
+    playRandomVideo();
+  });
+});
   
   const counter = document.getElementById("videoCounter");
   if (typeof videoList !== "undefined" && Array.isArray(videoList)) {
     counter.textContent = `Total Clips: ${videoList.length}`;
   } else {
     counter.textContent = `Total Clips: 0`;
-  }
-});
+  };
