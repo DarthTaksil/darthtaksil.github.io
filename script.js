@@ -19,7 +19,8 @@ function onYouTubeIframeAPIReady() {
 }
 
 function showYearButtons() {
-  console.log("showYearButtons triggered");
+  console.log("Available Years:", window.availableYears);
+  
   const buttonRow = document.getElementById("buttonRow");
   buttonRow.innerHTML = ""; // Clear existing buttons
 
@@ -35,29 +36,25 @@ function showYearButtons() {
   yearContainer.appendChild(backBtn);
 
   // Year buttons
-  for (let year = 2017; year <= 2025; year++) {
+    window.availableYears.forEach((year) => {
     const btn = document.createElement("button");
     btn.textContent = year;
     btn.className = "year-button";
-
-      btn.addEventListener("click", () => { 
-        // Clear active class from all buttons
-        const allButtons = document.querySelectorAll(".year-button");
-        allButtons.forEach(b => b.classList.remove("active"));
-
-        // Set active class on clicked button
-        btn.classList.add("active");
-
-        // Load videos
-        loadYearVideos(year);
-      });
+    btn.addEventListener("click", () => {
+      const allButtons = document.querySelectorAll(".year-button");
+      allButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      loadYearVideos(year);
+    });
     yearContainer.appendChild(btn);
-  }
+  });
 
   buttonRow.replaceChildren(yearContainer);
 }
 
 function loadYearVideos(year) {
+  console.log("Creating button for year:", year);
+
   const script = document.createElement("script");
   script.src = `byyear/${year}.js`;
   script.onload = () => {
@@ -67,7 +64,6 @@ function loadYearVideos(year) {
     } else {
       alert("No videos found for this year.");
     }
-    // Clean up to avoid reuse
     delete window.yearVideos;
   };
   script.onerror = () => {

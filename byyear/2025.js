@@ -1,3 +1,4 @@
 window.yearVideos = [
-"SMUmjcS62rE"
+"SMUmjcS62rE",
+"t6vzzq2X-us"
 ];
