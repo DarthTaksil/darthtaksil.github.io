@@ -90,6 +90,28 @@ button:hover {
   background-color: #645912; /* slightly darker gold on hover */
 }
 
+.year-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.year-button-container button.active {
+  background-color: white !important;
+  color: black !important;
+}
+
+#yearBtn {
+  background-color: #33cf4d;
+  color: #070707;
+}
+
+#yearBtn:hover {
+  background-color: #126424; /* slightly darker gold on hover */
+}
+
 .top-bar {
   position: fixed;
   top: 10px;
@@ -210,12 +232,12 @@ a:hover {
   display: inline-block;
   margin-top: 30px;
   padding: 10px 20px;
-  background-color: #0f0f0f;
+  background-color: #252525;
   color: white;
   border-radius: 6px;
   transition: background-color 0.2s ease;
 }
 
 .back-button:hover {
-  background-color: #3a3a3a;
+  background-color: #4d4d4d;
 }
