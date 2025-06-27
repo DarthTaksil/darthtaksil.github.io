@@ -17,5 +17,13 @@ window.yearVideos = [
 "yFFq2bdPqyU",
 "PuPv9rflAck",
 "cviPfZhle9A",
-"XBe6zal-AUo"
+"XBe6zal-AUo",
+"PB_L6ju8giA",
+"NO2bE8AsSF8",
+"5CQVWzK-kMo",
+"3tMpFFiMg2A",
+"NTvEeQEg_7E",
+"6tkjJigE50I",
+"J0aK9uqFfas",
+"lITVK780Iqc"
 ];
