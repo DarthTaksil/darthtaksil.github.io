@@ -16,6 +16,17 @@ function onYouTubeIframeAPIReady() {
       modestbranding: 1
     }
   });
+
+  // 🔍 Watch for the iframe and modify its attributes
+  const observer = new MutationObserver(() => {
+    const iframe = document.querySelector("#player iframe");
+    if (iframe) {
+      iframe.setAttribute("allow", "autoplay; fullscreen; keyboard"); // 💡 key part
+      observer.disconnect(); // Stop observing once we've updated it
+    }
+  });
+
+  observer.observe(document.getElementById("player"), { childList: true, subtree: true });
 }
 
 function showYearButtons() {
@@ -130,4 +141,49 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("yearBtn").addEventListener("click", showYearButtons);
+
+  document.getElementById("fullscreenBtn").addEventListener("click", toggleFullScreen);
 }
+
+  function toggleFullScreen() {
+    const wrapper = document.getElementById("playerWrapper");
+    if (!document.fullscreenElement) {
+      wrapper.requestFullscreen().catch(err => {
+        console.error("Fullscreen failed:", err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key.toLowerCase() === "f") {
+      toggleFullScreen();
+    }
+  });
+
+function flashButton(buttonId) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
+  btn.classList.add("flash");
+  setTimeout(() => btn.classList.remove("flash"), 200);
+}
+
+document.addEventListener("keydown", (event) => {
+  const isTyping = document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA";
+  if (isTyping) return;
+
+const key = event.key.toLowerCase();
+
+  if (key === "a") {
+    flashButton("randomBtn");
+    currentVideoList = videoList;
+    playRandomVideo();
+  }
+
+  if (key === "s") {
+    flashButton("goldBtn");
+    currentVideoList = goldVideoList;
+    playRandomVideo();
+  }
+});
