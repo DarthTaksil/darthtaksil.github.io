@@ -1,6 +1,8 @@
 let player;
 let playerReady = false;
-let currentVideoList = videoList; // default to videos.js
+let currentVideoList = videoList; // defaults to videos.js
+let lastPlaylist = videoList; // previously played video list
+let lastClickedButton = null; // last clicked button
 
 function onYouTubeIframeAPIReady() {
   const video = getRandomVideo();
@@ -17,11 +19,11 @@ function onYouTubeIframeAPIReady() {
     }
   });
 
-  // 🔍 Watch for the iframe and modify its attributes
+  // Watch for the iframe and modify its attributes
   const observer = new MutationObserver(() => {
     const iframe = document.querySelector("#player iframe");
     if (iframe) {
-      iframe.setAttribute("allow", "autoplay; fullscreen; keyboard"); // 💡 key part
+      iframe.setAttribute("allow", "autoplay; fullscreen; keyboard");
       observer.disconnect(); // Stop observing once we've updated it
     }
   });
@@ -54,7 +56,10 @@ function showYearButtons() {
     btn.addEventListener("click", () => {
       const allButtons = document.querySelectorAll(".year-button");
       allButtons.forEach(b => b.classList.remove("active"));
+
       btn.classList.add("active");
+      lastClickedButton = btn;
+
       loadYearVideos(year);
     });
     yearContainer.appendChild(btn);
@@ -71,6 +76,7 @@ function loadYearVideos(year) {
   script.onload = () => {
     if (Array.isArray(window.yearVideos)) {
       currentVideoList = window.yearVideos;
+      lastPlaylist = window.yearVideos;
       playRandomVideo();
     } else {
       alert("No videos found for this year.");
@@ -101,27 +107,32 @@ function onPlayerStateChange(event) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
   document.getElementById("randomBtn").addEventListener("click", () => {
     currentVideoList = videoList;
+    lastPlaylist = videoList;
+    lastClickedButton = document.getElementById("randomBtn");
     playRandomVideo();
   });
 
   document.getElementById("goldBtn").addEventListener("click", () => {
     currentVideoList = goldVideoList;
+    lastPlaylist = goldVideoList;
+    lastClickedButton = document.getElementById("goldBtn");
     playRandomVideo();
   });
 
   document.getElementById("yearBtn").addEventListener("click", showYearButtons);
 });
   
-  const counter = document.getElementById("videoCounter");
+const counter = document.getElementById("videoCounter");
   if (typeof videoList !== "undefined" && Array.isArray(videoList)) {
     counter.textContent = `Total Clips: ${videoList.length}`;
   } else {
     counter.textContent = `Total Clips: 0`;
   };
 
-  function restoreMainButtons() {
+function restoreMainButtons() {
   const buttonRow = document.getElementById("buttonRow");
   buttonRow.innerHTML = `
     <button id="randomBtn">Play Random Clint Clips</button>
@@ -132,58 +143,70 @@ document.addEventListener("DOMContentLoaded", () => {
   // Reattach event listeners
   document.getElementById("randomBtn").addEventListener("click", () => {
     currentVideoList = videoList;
+    lastPlaylist = videoList;
     playRandomVideo();
   });
 
   document.getElementById("goldBtn").addEventListener("click", () => {
     currentVideoList = goldVideoList;
+    lastPlaylist = goldVideoList;
     playRandomVideo();
   });
 
   document.getElementById("yearBtn").addEventListener("click", showYearButtons);
-
-  document.getElementById("fullscreenBtn").addEventListener("click", toggleFullScreen);
 }
 
-  function toggleFullScreen() {
-    const wrapper = document.getElementById("playerWrapper");
-    if (!document.fullscreenElement) {
-      wrapper.requestFullscreen().catch(err => {
-        console.error("Fullscreen failed:", err);
-      });
-    } else {
-      document.exitFullscreen();
-    }
+function toggleFullScreen() {
+  const wrapper = document.getElementById("playerWrapper");
+  if (!document.fullscreenElement) {
+    wrapper.requestFullscreen().catch(err => {
+      console.error("Fullscreen failed:", err);
+    });
+  } else {
+    document.exitFullscreen();
   }
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key.toLowerCase() === "f") {
-      toggleFullScreen();
-    }
-  });
-
-function flashButton(buttonId) {
-  const btn = document.getElementById(buttonId);
-  if (!btn) return;
-  btn.classList.add("flash");
-  setTimeout(() => btn.classList.remove("flash"), 200);
 }
 
 document.addEventListener("keydown", (event) => {
-  const isTyping = document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA";
-  if (isTyping) return;
+  if (event.key.toLowerCase() === "f") {
+    toggleFullScreen();
+  }
+});
 
-const key = event.key.toLowerCase();
+function flashButton(button) {
+  if (!button) return;
 
-  if (key === "a") {
-    flashButton("randomBtn");
-    currentVideoList = videoList;
+  // Use different class for year buttons
+  const isYear = button.classList.contains("year-button");
+  const flashClass = isYear ? "flash-dark" : "flash";
+
+  button.classList.add(flashClass);
+  setTimeout(() => button.classList.remove(flashClass), 200);
+}
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
+
+  if (key === "a" && lastClickedButton) {
     playRandomVideo();
+
+    const isYear = lastClickedButton.classList.contains("year-button");
+    const flashClass = isYear ? "flash-dark" : "flash";
+
+    lastClickedButton.classList.add(flashClass);
+    setTimeout(() => {
+      lastClickedButton.classList.remove(flashClass);
+    }, 200);
   }
 
   if (key === "s") {
-    flashButton("goldBtn");
     currentVideoList = goldVideoList;
+    lastPlaylist = goldVideoList;
     playRandomVideo();
+    flashButton("goldBtn"); // Optional visual cue
+  }
+
+  if (key === "f") {
+    toggleFullScreen();
   }
 });
