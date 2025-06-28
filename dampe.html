@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dampe's Treasure</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dampe Digging</h1>
+  <button id="digBtn" onclick="dig()">Dig</button>
+  <div id="result"></div>
+
+    <script>
+        let currentDrought = 0;
+        let longestDrought = 0;
+
+        function dig() {
+            const digBtn = document.getElementById("digBtn");
+            digBtn.classList.add("flash");
+            setTimeout(() => button.classList.remove("flash"), 200);
+
+
+            const roll = Math.random();
+            let resultText = "";
+            let imageName = "";
+
+                if (roll < 0.10) {
+                    resultText = "Heart Piece";
+                    imageName = "heartpiece.png";
+
+                    if (currentDrought > longestDrought) {
+                    longestDrought = currentDrought;
+                    }
+                    currentDrought = 0;
+                } else if (roll < 0.50) {
+                    resultText = "Green Rupee";
+                    imageName = "grnrup.png";
+                    currentDrought++;
+                } else if (roll < 0.80) {
+                    resultText = "Blue Rupee";
+                    imageName = "blurup.png";
+                    currentDrought++;
+                } else {
+                    resultText = "Red Rupee";
+                    imageName = "redrup.png";
+                    currentDrought++;
+                }
+
+                const resultDiv = document.getElementById("result");
+
+                resultDiv.innerHTML = `
+                <p>${resultText}</p>
+                <img src="/images/${imageName}" alt="${resultText}" class="result-img" />
+                `;
+
+                document.getElementById("currentDrought").textContent = `Current Drought: ${currentDrought}`;
+                document.getElementById("longestDrought").textContent = `Longest Drought: ${longestDrought}`;
+        }
+    </script>
+
+    <div id="droughtStats">
+        <span id="currentDrought">Current Drought: 0</span>
+        <span id="longestDrought">Longest Drought: 0</span>
+    </div>
+
+</body>
+</html>

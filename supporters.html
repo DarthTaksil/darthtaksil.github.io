@@ -20,6 +20,27 @@
         <li>Scotty</li>
       </ul>
 
+      <div class="password-container">
+        <input type="password" id="secretInput" placeholder="Enter secret code..." />
+        <button onclick="checkPassword()">Submit</button>
+        <p id="passwordFeedback"></p>
+
+        <script>
+          function checkPassword() {
+            const input = document.getElementById("secretInput").value.toLowerCase();
+            const feedback = document.getElementById("passwordFeedback");
+
+            if (input === "dampe") {
+              window.location.href = "/dampe.html";
+            } else {
+              feedback.textContent = "Incorrect password.";
+              feedback.style.color = "red";
+            }
+          }
+        </script>
+
+      </div>
+
       <a href="index.html" class="back-button">Back to ClintStevensTV</a>
     </div>
   </div>
