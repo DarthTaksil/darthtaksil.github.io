@@ -282,27 +282,31 @@ a:hover {
 
 .result-img {
   margin-top: 10px;
-  width: 50px;
-  height: auto;
+  margin-bottom: 10px;
+  width: auto;
+  height: 100px;
   border-radius: 15px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.2);
 }
 
 #droughtStats {
-  position: bottom;
   margin-top: 10px;
   top: 20px;
   width: 100%;
   text-align: center;
   color: white;
-  font-family: monospace;
+  font-family: Arial;
   font-size: 16px;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.6);
   padding: 8px 0;
   pointer-events: none;
 }
 
 #droughtStats span {
   margin: 0 20px;
+}
+
+.digflash {
+  filter: brightness(1.5);
+  box-shadow: 0 0 10px rgba(83, 137, 141, 0.6);
+  transition: all 0.1s ease;
 }
