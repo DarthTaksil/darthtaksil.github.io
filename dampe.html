@@ -30,8 +30,85 @@
     <script>
         let currentDrought = 0;
         let longestDrought = 0;
+        let heartPiecesReceived = 0;
+        let digCount = 0;
+        let displayedRupees = 99;
+        let Rupees = 99;
+        let previousRupees = Rupees;
 
+
+        // Rupee Number Animation
+        function animateRupeeCount() {
+          if (displayedRupees !== Rupees) {
+            // Easing
+            displayedRupees += (Rupees - displayedRupees) * 0.1;
+
+            // Snap to final value if very close
+            if (Math.abs(Rupees - displayedRupees) < 0.5) {
+              displayedRupees = Rupees;
+            }
+
+            // Round and update display
+            const rounded = Math.round(displayedRupees);
+            document.getElementById("rupeeAmount").textContent = rounded;
+
+            // Flash if the value changes
+            if (rounded !== previousRupees) {
+              const counterEl = document.getElementById("rupeeCounter");
+
+              if (rounded > previousRupees) {
+                counterEl.classList.add("flash-gain");
+                setTimeout(() => counterEl.classList.remove("flash-gain"), 300);
+              } else if (rounded < previousRupees) {
+                counterEl.classList.add("flash-loss");
+                setTimeout(() => counterEl.classList.remove("flash-loss"), 300);
+              }
+
+              previousRupees = rounded;
+            }
+          }
+
+          requestAnimationFrame(animateRupeeCount);
+        }
+
+        // Controller Support
+        let gamepadIndex = null;
+        let prevButtonsPressed = [];
+
+        window.addEventListener("gamepadconnected", (e) => {
+          console.log("Gamepad connected:", e.gamepad);
+          gamepadIndex = e.gamepad.index;
+          pollGamepad();
+        });
+
+        window.addEventListener("gamepaddisconnected", (e) => {
+          console.log("Gamepad disconnected:", e.gamepad);
+          if (gamepadIndex === e.gamepad.index) {
+            gamepadIndex = null;
+            prevButtonsPressed = [];
+          }
+        });
+
+        function pollGamepad() {
+          if (gamepadIndex !== null) {
+            const gamepad = navigator.getGamepads()[gamepadIndex];
+            if (gamepad) {
+              gamepad.buttons.forEach((button, index) => {
+                const wasPressed = prevButtonsPressed[index] || false;
+                if (button.pressed && !wasPressed) {
+                  dig();
+                }
+                prevButtonsPressed[index] = button.pressed;
+              });
+            }
+          }
+          requestAnimationFrame(pollGamepad);
+        }
+
+        // Button And Mouse Support
         function dig() {
+            digCount++;  // Increment dig counter each dig
+            Rupees -= 10;
             const digBtn = document.getElementById("digBtn");
             digBtn.classList.add("digflash");
             setTimeout(() => digBtn.classList.remove("digflash"), 200);
@@ -45,6 +122,8 @@
                     resultText = "Heart Piece";
                     imageName = "heartpiece.png";
 
+                    heartPiecesReceived++; // Increment heart pieces counter
+
                     if (currentDrought > longestDrought) {
                     longestDrought = currentDrought;
                     }
@@ -52,14 +131,17 @@
                 } else if (roll < 0.50) {
                     resultText = "Green Rupee";
                     imageName = "grnrup.png";
+                    Rupees += 1;
                     currentDrought++;
                 } else if (roll < 0.80) {
                     resultText = "Blue Rupee";
                     imageName = "blurup.png";
+                    Rupees += 5;
                     currentDrought++;
                 } else {
                     resultText = "Red Rupee";
                     imageName = "redrup.png";
+                    Rupees += 20;
                     currentDrought++;
                 }
 
@@ -70,15 +152,27 @@
                 <img src="/images/${imageName}" alt="${resultText}" class="result-img" />
                 `;
 
+                document.getElementById("digCounter").textContent = `Digs: ${digCount}`;
                 document.getElementById("currentDrought").textContent = `Current Drought: ${currentDrought}`;
                 document.getElementById("longestDrought").textContent = `Longest Drought: ${longestDrought}`;
+                document.getElementById("heartPiecesReceived").textContent = `Heart Pieces Received: ${heartPiecesReceived}`;
+                document.getElementById("rupeeAmount").textContent = Rupees;
+                
         }
+    animateRupeeCount();
     </script>
 
-        <div id="droughtStats">
-            <span id="currentDrought">Current Drought: 0</span>
-            <span id="longestDrought">Longest Drought: 0</span>
-        </div>
+      <div id="droughtStats" style="text-align:center; vertical-align: middle; margin-top: 1em;">
+        <div id="currentDrought">Current Drought: 0</div>
+        <div id="longestDrought">Longest Drought: 0</div><br>
+        <div id="digCounter">Digs : 0</div>
+        <div id="heartPiecesReceived">Heart Pieces Received: 0</div><br>
+
+          <div id="rupeeCounter">
+            <img src="/images/wallet.webp" alt="Rupee" style="height: 32px; vertical-align: middle; margin-right: 2px;">
+            <span id="rupeeAmount">99</span>
+          </div>
+      </div>
 
     <a href="index.html" class="back-button">Back to ClintStevensTV</a>
 

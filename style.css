@@ -316,3 +316,32 @@ a:hover {
   box-shadow: 0 0 10px rgba(83, 137, 141, 0.6);
   transition: all 0.1s ease;
 }
+
+/* Used in Dampe Digging to keep track of the user's rupees */
+#rupeeCounter {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 1.5em;
+  font-family: 'Verdana', sans-serif;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+#rupeeCounter.flash-gain {
+  background-color: #1a3; /* Green flash */
+  transition: background-color 0.3s ease;
+}
+
+#rupeeCounter.flash-loss {
+  background-color: #a11; /* Red flash */
+  transition: background-color 0.3s ease;
+}

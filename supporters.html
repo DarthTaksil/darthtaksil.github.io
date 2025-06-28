@@ -42,8 +42,14 @@
 
             if (input === "dampe") {
               window.location.href = "/dampe.html";
+            } else if (input === "stats") {
+              window.location.href = "https://twitchtracker.com/clintstevens";
+            } else if (input === "twitch") {
+              window.location.href = "https://www.twitch.tv/clintstevens";
+            } else if (input === "youtube") {
+              window.location.href = "https://www.youtube.com/@ClintStevens";
             } else {
-              feedback.textContent = "Incorrect password.";
+              feedback.textContent = "Wrong. Try again.";
               feedback.style.color = "red";
             }
           }
