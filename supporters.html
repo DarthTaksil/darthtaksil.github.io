@@ -24,6 +24,15 @@
       <div class="password-container">
         <input type="password" id="secretInput" placeholder="Enter secret code..." />
         <button onclick="checkPassword()">Submit</button>
+        
+        <script>
+          document.addEventListener("keydown", (event) => {
+          if(event.key === "Enter") {
+            checkPassword();
+          }
+          });
+        </script>
+
         <p id="passwordFeedback"></p>
 
         <script>
