@@ -280,6 +280,12 @@ a:hover {
   cursor: pointer;
 }
 
+#result {
+  margin-top: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
 .result-img {
   margin-top: 10px;
   margin-bottom: 10px;
