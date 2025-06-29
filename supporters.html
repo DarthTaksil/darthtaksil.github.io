@@ -41,13 +41,19 @@
             const feedback = document.getElementById("passwordFeedback");
 
             if (input === "dampe") {
-              window.location.href = "/dampe.html";
+              window.location.href = "secret/dampe.html";
+            } else if (input === "ocarina") {
+              window.location.href = "secret/ocarina.html";
             } else if (input === "stats") {
               window.location.href = "https://twitchtracker.com/clintstevens";
             } else if (input === "twitch") {
               window.location.href = "https://www.twitch.tv/clintstevens";
             } else if (input === "youtube") {
               window.location.href = "https://www.youtube.com/@ClintStevens";
+            } else if (input === "passwords") {
+              window.location.href = "secret/passwords.html";
+            } else if (input === "password") {
+              window.location.href = "secret/passwords.html";
             } else {
               feedback.textContent = "Wrong. Try again.";
               feedback.style.color = "red";
