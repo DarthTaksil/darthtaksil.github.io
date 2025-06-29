@@ -4,11 +4,11 @@ let currentInstrument = 'ocarina';
 
 // Staff Lines alignment and Note Overlay
 const noteData = {
-    "A":  { filename: "d.wav",  position: "0%"    },
-    "▼":  { filename: "f.wav",  position: "12%"   },
-    "▶":  { filename: "a.wav",  position: "37%"   },
-    "◀":  { filename: "b.wav",  position: "50%"   },
-    "▲":  { filename: "d2.wav", position: "75%"  }
+    "A":  { filename: "D.wav",  position: "0%"    },
+    "▼":  { filename: "F.wav",  position: "12%"   },
+    "▶":  { filename: "A.wav",  position: "37%"   },
+    "◀":  { filename: "B.wav",  position: "50%"   },
+    "▲":  { filename: "D2.wav", position: "75%"  }
 };
 
 const audioBuffers = {};
