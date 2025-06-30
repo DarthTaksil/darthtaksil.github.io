@@ -8,5 +8,6 @@ const goldVideoList = [
     "cviPfZhle9A",
     "ytm9X9_JfQY",
     "uLaKws4-qjU",
-    "KNV-SPVswls"
+    "KNV-SPVswls",
+    "WN-EZHlAsFc"
 ];
