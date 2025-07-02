@@ -114,11 +114,11 @@ button:hover {
 
 .top-bar {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 20px;
   display: flex;
-  gap: 12px;
-  align-items: center;
+  flex-direction: column; /* stack vertically */
+  gap: 5px; /* space between buttons */
   z-index: 9999;
 }
 
@@ -126,19 +126,18 @@ button:hover {
   text-decoration: none;
 }
 
-/* Supporters Button on index */
+/* Supporters Button | About Button on index */
 .top-link {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   background: rgba(0,0,0,0.7);
   padding: 6px 12px;
   border-radius: 4px;
-
   color: #585858;
   font-weight: bold;
   font-size: 14px;
   transition: background 0.2s;
+  text-align: center;
+  text-decoration: none;
+  width: max-content;
 }
 
 .top-link:hover {
@@ -146,29 +145,16 @@ button:hover {
   background: gold;
 }
 
-
-/* Style for all Hyperlinks */
-.kofi-link:hover img {
-  transform: scale(1.05);
+.about-link {
+  color: #585858;
 }
 
-a {
-  color: #ffd700; /* gold */
-  text-decoration: none; /* optional: removes underline */
+.about-link:hover {
+  color: #0d0d0d;
+  background: #00b3b3; /* teal glow */
 }
 
-a:hover {
-  color: #9b934b; /* lighter gold on hover */
-  text-decoration: underline; /* optional */
-}
 
-a:visited {
-  color: #c6a700; /* darker gold if visited */
-}
-
-a:active {
-  color: #ffeb3b;
-}
 
 /* Styling for supporters.html */
 body {
@@ -219,8 +205,36 @@ body {
   border-bottom: 1px solid #333;
 }
 
+.submit-btn {
+  color: #FFFFFF;
+  background-color: #4d4d4d;
+}
+
+.submit-btn:hover {
+  color: #b6b6b6;
+  background-color: #272727;
+}
+
+.kofi-btn {
+  color: #008080;
+  max-width: 800px;
+  width: 100%;
+  padding: 8px;
+  background-color: #161616;
+  border-radius: 12px;
+}
+
+.kofi-btn:hover {
+  color: #f2f2f2;
+  background-color: #008080;
+  transition: background-color 0.5s ease;
+}
+
+
+
+
+/* All Hyperlinks Data */
 a {
-  color: #ffd700;
   text-decoration: none;
 }
 
@@ -232,14 +246,15 @@ a:hover {
   display: inline-block;
   margin-top: 30px;
   padding: 10px 20px;
-  background-color: #252525;
-  color: white;
+  background-color: #008080;
+  color: #f2f2f2;
   border-radius: 6px;
   transition: background-color 0.2s ease;
 }
 
 .back-button:hover {
   background-color: #4d4d4d;
+  text-decoration: none;
 }
 
 .flash {
@@ -344,4 +359,74 @@ a:hover {
 #rupeeCounter.flash-loss {
   background-color: #a11; /* Red flash */
   transition: background-color 0.3s ease;
+}
+
+/* ABOUT SECTION */
+
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 60px;
+  padding: 60px 20px;
+  flex-wrap: wrap;
+}
+
+.about-box {
+  background-color: #1c1c1c;
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.about-box h2 {
+  color: #00c2c2;
+  margin-bottom: 15px;
+}
+
+.about-box h3 {
+  color: #00c2c2;
+  margin-bottom: 15px;
+}
+
+.left-box ul {
+  list-style-type: none;
+  padding: 2px;
+}
+
+.left-box li {
+  padding: 4px 0;
+  width: max-content;
+  font-size: 1.1em;
+  border-bottom: 1px solid #333;
+}
+
+.right-box {
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 55%;
+  font-size: 1.1em;
+  line-height: 1.2;
+}
+
+.back-home-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.back-home-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #008080;
+  color: white;
+  font-size: 1em;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.back-home-btn:hover {
+  background-color: #0d4646;
+  text-decoration: none;
 }
