@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 .indexbody {
   margin: 0;
   padding: 0;
@@ -317,13 +319,22 @@ a:hover {
 }
 
 .about-box h2 {
+  font-family: Bebas Neue; 
+  font-size: 32px;
   color: #00c2c2;
   margin-bottom: 15px;
 }
 
 .about-box h3 {
+  font-family: Bebas Neue; 
+  font-size: 32px;
   color: #00c2c2;
   margin-bottom: 15px;
+}
+.about-box p {
+  font-family: Arial;
+  color: white;
+  line-height: 1.6;
 }
 
 .left-box ul {
