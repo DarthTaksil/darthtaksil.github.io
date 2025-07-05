@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta property="og:title" content="ClintStevensTV" />
+  <meta property="og:description" content="Resource Hub for ClintStevens Speedrunning." />
+  <meta property="og:url" content="https://darthtaksil.github.io/" />
+  <meta property="type" content="website" />
+  <meta property="og:image" content="https://darthtaksil.github.io/images/clint.jpg" />
+  <meta property="og:site_name" content="Created by DarthTaksil" />
+
+  <link rel="icon" type="image/x-icon" href="/clint.ico">
+
+  <meta charset="UTF-8">
+  <title>ClintHub</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      color: #ffffff;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    #toc {
+      background-color: #1a1a1a;
+      width: 250px;
+      padding: 1em;
+      border-right: 3px solid #000000;
+      overflow-y: auto;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    #toc a {
+      display: block;
+      margin: 0.25em 15px;
+      text-decoration: none;
+      color: #00bbbb;
+    }
+
+    #main {
+      background-color: #131313;
+      color: #ffffff;
+      flex: 1;
+      padding: 2em;
+      overflow-y: auto;
+    }
+
+    #chapter-buttons {
+      margin-bottom: 1em;
+    }
+
+    button {
+      background-color: #008080;
+      color: #ffffff;
+      margin-right: 0.5em;
+      padding: 0.4em 0.8em;
+    }
+
+    h1 {
+      color: #00bbbb;
+      scroll-margin-top: 80px;
+    }
+    
+    h2 {
+      color: #00bbbb;
+      scroll-margin-top: 80px;
+    }
+
+    h3 {
+      margin-left: 15px;
+      color: #00bbbb;
+      scroll-margin-top: 80px;
+    }
+
+    a {
+      color:#00bbbb;
+    }
+
+    .toc-header {
+      display: flex;
+      margin-bottom: 10px;
+      gap: 0.75em;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Left Sidebar TOC -->
+  <nav id="toc">
+    <strong>Table of Contents</strong>
+    <!-- Generated TOC goes here -->
+  </nav>
+
+  <!-- Main Content Area -->
+  <div id="main">
+    <h1>CLINT ROUTES</h1>
+
+    <!-- Chapter Buttons -->
+    <div id="chapter-buttons">
+      <button onclick="loadMarkdown('intro.md')">Resources</button>
+      <button onclick="loadMarkdown('sm64_16Star.md')">16 Star</button>
+      <button onclick="loadMarkdown('sm64_70Star.md')">70 Star</button>
+      <button onclick="loadMarkdown('sm64_120Star.md')">120 Star</button>
+    </div>
+
+    <!-- Markdown Content -->
+    <div id="content">Select a route above to begin.</div>
+  </div>
+
+  <script>
+    function loadMarkdown(file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(md => {
+          const html = marked.parse(md);
+          document.getElementById('content').innerHTML = html;
+          generateTOC();
+        });
+    }
+
+    function generateTOC() {
+      const content = document.getElementById('content');
+      const toc = document.getElementById('toc');
+      toc.innerHTML = `
+        <div class="toc-header">
+          <strong>Splits</strong>
+        </div>
+      `;
+
+      const headers = content.querySelectorAll('h1, h2, h3');
+      headers.forEach(header => {
+        if (!header.id) {
+          header.id = header.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+        }
+
+        const link = document.createElement('a');
+        link.href = `#${header.id}`;
+        link.textContent = header.textContent;
+        link.style.marginLeft = header.tagName === 'H2' ? '1em' : header.tagName === 'H3' ? '2em' : '0';
+        toc.appendChild(link);
+      });
+    }
+
+    loadMarkdown('intro.md');
+  </script>
+</body>
+</html>
