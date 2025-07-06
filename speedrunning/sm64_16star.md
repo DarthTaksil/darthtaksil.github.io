@@ -10,8 +10,8 @@ With these splits, you split at the black screen after you get:
 
 ---
 ## WHOMP
-### Bomb-omb Battlefld.
-- Behind Chain Chmp's Gate
+### Bob-omb Battlefld.
+- Behind Chain Chomp's Gate
 ### Whomp's Fortress
 - Fall onto the Caged Island (owl-less)
 - Blast Away the Wall (Cannon-less)
@@ -43,7 +43,7 @@ With these splits, you split at the black screen after you get:
 - Board Bowser's Sub 
 ---
 ## BOWSER3
-- Ameno
+- AMENO
 ---
 
 # Footnotes

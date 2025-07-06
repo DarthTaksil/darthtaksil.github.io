@@ -39,7 +39,6 @@
       display: block;
       margin: 0.25em 15px;
       text-decoration: none;
-      color: #00bbbb;
     }
 
     #main {
@@ -67,14 +66,16 @@
     }
     
     h2 {
-      color: #00bbbb;
-      scroll-margin-top: 80px;
+      font-family: Bebas Neue;
+      font-size: 36px;
+      color: #dcad29;
+      scroll-margin-top: 40px;
     }
 
     h3 {
       margin-left: 15px;
       color: #00bbbb;
-      scroll-margin-top: 80px;
+      scroll-margin-top: 20px;
     }
 
     a {
@@ -85,6 +86,27 @@
       display: flex;
       margin-bottom: 10px;
       gap: 0.75em;
+    }
+
+    .toc-link.h1 { 
+      color: #ffffff;
+    }
+
+    .toc-link.h2 { 
+      font-family: Bebas Neue;
+      font-size: 24px;
+      color: #dcad29;
+      margin-top: 5px;
+    }
+
+    .toc-link.h3 { 
+      font-family: Bebas Neue;
+      font-size: 20px;
+      color: #00bbbb;
+    }
+
+    .toc-link:hover {
+      opacity: 0.75;
     }
   </style>
 </head>
@@ -141,6 +163,9 @@
         const link = document.createElement('a');
         link.href = `#${header.id}`;
         link.textContent = header.textContent;
+
+        link.classList.add('toc-link', header.tagName.toLowerCase());
+
         link.style.marginLeft = header.tagName === 'H2' ? '1em' : header.tagName === 'H3' ? '2em' : '0';
         toc.appendChild(link);
       });

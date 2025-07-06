@@ -4,8 +4,8 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 ---
 
 ## WHOMPS 9
-### Bomb-omb Battlefld.
-- Behind Chain Chmp's Gate
+### Bob-omb Battlefld.
+- Behind Chain Chomp's Gate
 ### Peach's Slide
 - Star 1/2
 ### Whomp's Fortress
@@ -15,28 +15,36 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - Shoot into the Wild Blue
 - Chip Off Whomp's Block
 - To The Top of the Fortress
+
 ---
+
 ## BOWSER1 12
 ### Peach's Slide
 - Star 2/2
 ### Wingcap
 - Red Coin Star
-### Bowser in Dark World
+### Bowser in Drk Wrld
 - Red Coin Star
+
 ---
+
 ## CCM 17
-### Bomb-omb Battlefld.
+### Bob-omb Battlefld.
 - Shoot to the Island in the Sky
 ### Cool Cool Mtn.
 - Wall Kicks Will Work
 - Li'l Penguin Lost
 - 100 Coin Star + Slip Slidin' Away
+
 ---
+
 ## BBH 19
 ### Big Boo's Haunt
 - Big Boo's Balcony
 - Secret of the Haunted Books
+
 ---
+
 ## SSL 24
 ### Basement
 - Mips Star 1/2
@@ -45,7 +53,9 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - Pyramid Puzzle
 - In the Talons of The Big Bird
 - Shining Atop The Pyramid
+
 ---
+
 ## LLL 30
 ### Lethal Lava Land
 - Bully the Big Bully
@@ -53,7 +63,9 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - Red Coin Star
 - Red-Hot Log Rolling
 - Elevator Tour in the Volcano
+
 ---
+
 ## BOWSER2 34
 ### Dire Dire Docks
 - Chests in the Current
@@ -61,20 +73,26 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - The Manta Ray's Reward
 ### Bowser in Fire Sea
 - Red Coin Star
+
 ---
+
 ## WDW 39
 ### Wet Dry World
 - Express Elevator--Hurry Up!
 - 100 Coin Star + Secrets In The Shallows & Sky
 - Shocking Arrow Lifts!
 - Top O' The Town
+
 ---
+
 ## THI 42
 ### Tiny Huge Island
 - Five Itty Bitty Secrets
 - The Tip Top of the Huge Island
 - Pluck the Piranha Flower
+
 ---
+
 ## TTM 48
 ### Upstairs
 - Toad Star Outside TTM
@@ -84,14 +102,18 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - Red Coin Star
 - Blast to the Lonely Mushroom
 - Mysterious Mountainside
+
 ---
+
 ## SML 52
 ### Snowmanland
 - Snowman's Big Head
 - Whirl From The Freezing Pond
 - Chill With The Bully
 - In The Deep Freeze
+
 ---
+
 ## HMC 58
 ### Basement
 - Mips Star 2/2
@@ -101,14 +123,18 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - A-Maze-ing Emergency Exit
 - Metal-Head Mario Can Move!
 - Watch For Falling Rocks
+
 ---
+
 ## RR 62
 ### Rainbow Ride
 - Red Coins Star
 - Cruiser Crossing The Rainbow
 - Tricky Triangles
 - Swingin' in the Breeze
+
 ---
+
 ## TTC 70
 ### Tippy
 - Toad Star Outside TTC
@@ -119,7 +145,10 @@ This is the route taken from [Clint's 49:34 run](https://youtu.be/3xrXkuysmfY). 
 - Get a Hand
 - 100 Coin Star + Stomp on the Thwomp
 - Red Coin Star
+
 ---
+
 ## BOWSER3
-- Ameno
+- AMENO
+
 ---
