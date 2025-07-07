@@ -35,10 +35,50 @@
       height: 100vh;
     }
 
-    #toc a {
+    #toc #toc-links a {
       display: block;
-      margin: 0.25em 15px;
+      margin: 0.35em 15px;
       text-decoration: none;
+    }
+
+    #toc-links {
+      padding-bottom: 1.1em;
+    }
+
+    #toc-footer {
+      margin-top: 1em;
+      border-top: 1px solid #333;
+      padding-top: 1em;
+    }
+
+    #back-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 250px; /* same as #toc */
+      background-color: #111;
+      border-right: 3px solid #000000;
+      z-index: 999;
+      padding: 1em;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    #back-button {
+      display: block;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      padding: 0.6em;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: inset 0 0 3px rgba(255,255,255,0.1);
+      transition: background 0.2s;
+    }
+
+    #back-button:hover {
+      background-color: #555;
     }
 
     #main {
@@ -82,6 +122,10 @@
       color:#00bbbb;
     }
 
+    a:hover {
+      opacity: 0.75;
+    }
+
     .toc-header {
       display: flex;
       margin-bottom: 10px;
@@ -114,8 +158,9 @@
 <body>
   <!-- Left Sidebar TOC -->
   <nav id="toc">
-    <strong>Table of Contents</strong>
-    <!-- Generated TOC goes here -->
+    <div id="toc-links">
+      <!-- TOC links inserted here -->
+    </div>
   </nav>
 
   <!-- Main Content Area -->
@@ -128,6 +173,7 @@
       <button onclick="loadMarkdown('sm64_16star.md')">16 Star</button>
       <button onclick="loadMarkdown('sm64_70star.md')">70 Star</button>
       <button onclick="loadMarkdown('sm64_120star.md')">120 Star</button>
+      <button onclick="loadMarkdown('oot_100.md')">OoT - 100%</button>
     </div>
 
     <!-- Markdown Content -->
@@ -147,12 +193,8 @@
 
     function generateTOC() {
       const content = document.getElementById('content');
-      const toc = document.getElementById('toc');
-      toc.innerHTML = `
-        <div class="toc-header">
-          <strong>Splits</strong>
-        </div>
-      `;
+      const tocLinks = document.getElementById('toc-links'); // just this part
+      tocLinks.innerHTML = ""; // clear old links only
 
       const headers = content.querySelectorAll('h1, h2, h3');
       headers.forEach(header => {
@@ -165,13 +207,18 @@
         link.textContent = header.textContent;
 
         link.classList.add('toc-link', header.tagName.toLowerCase());
-
         link.style.marginLeft = header.tagName === 'H2' ? '1em' : header.tagName === 'H3' ? '2em' : '0';
-        toc.appendChild(link);
+
+        tocLinks.appendChild(link);
       });
     }
 
     loadMarkdown('intro.md');
   </script>
+
+  <div id="back-wrapper">
+    <a href="/index.html" id="back-button">← Back</a>
+  </div>
+
 </body>
 </html>
