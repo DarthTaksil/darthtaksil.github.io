@@ -235,6 +235,11 @@ function startCountdown(duration) {
 }
 
 async function claimDailyPack() {
+
+  // Disable the button right away
+  dailyButton.disabled = true;
+  dailyButton.style.opacity = 0.5;
+
   const now = new Date().toISOString();
   const newCards = await getRandomCardPack();
 
@@ -245,6 +250,9 @@ async function claimDailyPack() {
 
   if (error) {
     console.error('Failed to update daily claim:', error);
+    // Re-enable button so user can retry
+    dailyButton.disabled = false;
+    dailyButton.style.opacity = 1;
     return;
   }
 
@@ -253,9 +261,12 @@ async function claimDailyPack() {
   showDailyModal(newCards);
 
   await renderCardGrid();
+
+  // start countdown immediately after claim
+  checkDailyStatus();
 }
 
-// ⬇️ Keep outside of claimDailyPack()
+// Keep outside of claimDailyPack()
 function getCardImageUrl(cardId) {
   const paddedId = String(cardId).padStart(3, '0');
   return `./cards/${paddedId}.png`;
