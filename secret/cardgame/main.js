@@ -21,11 +21,6 @@ document.getElementById('login-discord').addEventListener('click', () => login('
 document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
 
-document.getElementById('sort-rarity').addEventListener('click', () => {
-  sortByRarity = !sortByRarity;
-  renderCardGrid();
-});
-
 // Filter Owned
 const filterOwnedButton = document.getElementById('filter-owned');
 let filterOwnedOnly = false;
