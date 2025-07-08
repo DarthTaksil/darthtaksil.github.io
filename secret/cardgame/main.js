@@ -113,6 +113,7 @@ function showGame(user) {
   authUI.style.display = 'none';
   gameUI.style.display = 'block';
   checkDailyStatus();
+  renderCardGrid();
 }
 
 // ---------------- DAILY ------------------
