@@ -153,9 +153,10 @@ async function renderCardGrid() {
 
   // Always sort by rarity, then name
   const rarityOrder = { common: 1, uncommon: 2, rare: 3, legendary: 4 };
-  let cardsToDisplay = [...allCards].sort((a, b) => {
+  const cardsToDisplay = [...allCards].sort((a, b) => {
     const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
-    return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
+    if (rarityDiff !== 0) return rarityDiff;
+    return a.id - b.id; // Sort by numeric ID after rarity
   });
 
   if (filterOwnedOnly) {
