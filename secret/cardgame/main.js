@@ -208,10 +208,10 @@ async function getRandomCardPack() {
   }
 
   const byRarity = {
-    Common: cards.filter(c => c.rarity === 'Common'),
-    Uncommon: cards.filter(c => c.rarity === 'Uncommon'),
-    Rare: cards.filter(c => c.rarity === 'Rare'),
-    Legendary: cards.filter(c => c.rarity === 'Legendary'),
+    Common: cards.filter(c => c.rarity === 'common'),
+    Uncommon: cards.filter(c => c.rarity === 'uncommon'),
+    Rare: cards.filter(c => c.rarity === 'rare'),
+    Legendary: cards.filter(c => c.rarity === 'legendary'),
   };
 
   const weights = { Common: 70, Uncommon: 20, Rare: 8, Legendary: 2 };
