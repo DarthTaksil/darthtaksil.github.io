@@ -15,7 +15,6 @@ const timerText = document.getElementById('timer-text');
 const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
 
-let sortByRarity = false;
 let filterOwnedOnly = false;
 
 // Event listeners
@@ -29,9 +28,14 @@ document.getElementById('sort-rarity').addEventListener('click', () => {
   renderCardGrid();
 });
 
-document.getElementById('filter-owned').addEventListener('click', () => {
+// Filter Owned
+const filterOwnedButton = document.getElementById('filter-owned');
+let filterOwnedOnly = false;
+
+filterOwnedButton.addEventListener('click', () => {
   filterOwnedOnly = !filterOwnedOnly;
-  renderCardGrid();
+  filterOwnedButton.classList.toggle('active', filterOwnedOnly);
+  renderCardGrid(); // re-render the grid with the filter
 });
 
 // Try to restore session
@@ -149,22 +153,12 @@ async function renderCardGrid() {
     cardMap.set(uc.card_id, uc.quantity);
   }
 
-  let cardsToDisplay = [...allCards];
-
-  if (filterOwnedOnly) {
-    cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
-  }
-
-  if (sortByRarity) {
-    const rarityOrder = { Common: 1, Uncommon: 2, Rare: 3, Legendary: 4 };
-    cardsToDisplay.sort((a, b) => {
-      const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
-      return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
-    });
-  } else {
-    // Default sort by ID
-    cardsToDisplay.sort((a, b) => a.id - b.id);
-  }
+  // Always sort by rarity, then name
+  const rarityOrder = { Common: 1, Uncommon: 2, Rare: 3, Legendary: 4 };
+  const cardsToDisplay = [...allCards].sort((a, b) => {
+    const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+    return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
+  });
 
   for (const card of cardsToDisplay) {
     const quantity = cardMap.get(card.id) || 0;
