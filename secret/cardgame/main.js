@@ -15,8 +15,6 @@ const timerText = document.getElementById('timer-text');
 const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
 
-let filterOwnedOnly = false;
-
 // Event listeners
 document.getElementById('login-google').addEventListener('click', () => login('google'));
 document.getElementById('login-discord').addEventListener('click', () => login('discord'));
