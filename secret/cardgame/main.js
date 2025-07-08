@@ -167,6 +167,21 @@ async function claimDailyPack() {
   const now = new Date().toISOString();
   const newCards = await getRandomCardPack();
 
+  newCards.forEach(card => {
+    function getCardImageUrl(cardId) {
+      const paddedId = String(cardId).padStart(3, '0'); // "001", "042", etc.
+      return `cards/${paddedId}.png`; // Adjust the folder path if needed
+    }
+    console.log(`Card: ${card.name} (${card.rarity}) - ${imgUrl}`);
+
+    // Optionally inject into the DOM
+    const img = document.createElement('img');
+    img.src = imgUrl;
+    img.alt = card.name;
+    img.width = 100;
+    document.body.appendChild(img);
+  });
+
   const { error } = await supabase
     .from('users')
     .update({ last_daily_claim: now })
@@ -205,9 +220,22 @@ async function getRandomCardPack() {
   for (let i = 0; i < 5; i++) {
     const rarity = pickWeightedRarity(weights);
     const options = byRarity[rarity];
-    const card = options[Math.floor(Math.random() * options.length)];
-    result.push(card);
+
+    if (options.length > 0) {
+      const card = options[Math.floor(Math.random() * options.length)];
+      result.push(card);
+    } else {
+      console.warn(`No cards found for rarity: ${rarity}`);
+    }
+
   }
+
+  console.log("Cards by rarity:", {
+    Common: byRarity.Common.length,
+    Uncommon: byRarity.Uncommon.length,
+    Rare: byRarity.Rare.length,
+    Legendary: byRarity.Legendary.length,
+  });
 
   return result;
 }
