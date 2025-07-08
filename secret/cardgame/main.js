@@ -15,11 +15,24 @@ const timerText = document.getElementById('timer-text');
 const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
 
+let sortByRarity = false;
+let filterOwnedOnly = false;
+
 // Event listeners
 document.getElementById('login-google').addEventListener('click', () => login('google'));
 document.getElementById('login-discord').addEventListener('click', () => login('discord'));
 document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
+
+document.getElementById('sort-rarity').addEventListener('click', () => {
+  sortByRarity = !sortByRarity;
+  renderCardGrid();
+});
+
+document.getElementById('filter-owned').addEventListener('click', () => {
+  filterOwnedOnly = !filterOwnedOnly;
+  renderCardGrid();
+});
 
 // Try to restore session
 checkUserSession();
@@ -136,7 +149,24 @@ async function renderCardGrid() {
     cardMap.set(uc.card_id, uc.quantity);
   }
 
-  for (const card of allCards) {
+  let cardsToDisplay = [...allCards];
+
+  if (filterOwnedOnly) {
+    cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
+  }
+
+  if (sortByRarity) {
+    const rarityOrder = { Common: 1, Uncommon: 2, Rare: 3, Legendary: 4 };
+    cardsToDisplay.sort((a, b) => {
+      const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+      return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
+    });
+  } else {
+    // Default sort by ID
+    cardsToDisplay.sort((a, b) => a.id - b.id);
+  }
+
+  for (const card of cardsToDisplay) {
     const quantity = cardMap.get(card.id) || 0;
     const imgPath = `./cards/${String(card.id).padStart(3, '0')}.png`;
 
@@ -159,6 +189,7 @@ async function renderCardGrid() {
     grid.appendChild(cardDiv);
   }
 }
+
 
 // ---------------- DAILY ------------------
 
