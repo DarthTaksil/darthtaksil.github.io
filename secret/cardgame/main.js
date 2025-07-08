@@ -92,21 +92,27 @@ async function checkUserSession(retry = 0) {
 }
 
 async function createUserIfNotExists(user) {
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from('users')
     .select('id')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();  // Use maybeSingle instead of single()
 
-  if (error && error.code === 'PGRST116') {
+  if (error && status !== 406) {
+    console.error('User fetch error:', error);
+    return;
+  }
+
+  if (!data) {
     const { error: insertError } = await supabase.from('users').insert({
       id: user.id,
       email: user.email,
       last_daily_claim: null,
     });
-    if (insertError) console.error('User creation failed:', insertError);
-  } else if (error) {
-    console.error('User fetch error:', error);
+
+    if (insertError && insertError.code !== "23505") {
+      console.error('User creation failed:', insertError);
+    }
   }
 }
 
@@ -229,21 +235,6 @@ async function claimDailyPack() {
   const now = new Date().toISOString();
   const newCards = await getRandomCardPack();
 
-  newCards.forEach(card => {
-    function getCardImageUrl(cardId) {
-      const paddedId = String(cardId).padStart(3, '0'); // "001", "042", etc.
-      return `cards/${paddedId}.png`; // Adjust the folder path if needed
-    }
-    console.log(`Card: ${card.name} (${card.rarity}) - ${imgUrl}`);
-
-    // Optionally inject into the DOM
-    const img = document.createElement('img');
-    img.src = imgUrl;
-    img.alt = card.name;
-    img.width = 100;
-    document.body.appendChild(img);
-  });
-
   const { error } = await supabase
     .from('users')
     .update({ last_daily_claim: now })
@@ -255,11 +246,51 @@ async function claimDailyPack() {
   }
 
   await giveCardsToUser(newCards);
-  console.log("You got:");
-  newCards.forEach(card => console.log(`- ${card.name} [${card.rarity}]`));
-  checkDailyStatus();
+
+  showDailyModal(newCards);
+
   await renderCardGrid();
 }
+
+// ⬇️ Keep outside of claimDailyPack()
+function getCardImageUrl(cardId) {
+  const paddedId = String(cardId).padStart(3, '0');
+  return `./cards/${paddedId}.png`;
+}
+
+function showDailyModal(cards) {
+  const modal = document.getElementById('daily-modal');
+  const modalCards = document.getElementById('modal-cards');
+  const modalDate = document.getElementById('modal-date');
+
+  // Set today's date
+  const today = new Date();
+  modalDate.textContent = today.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
+  // Clear previous content
+  modalCards.innerHTML = '';
+
+  // Add card images
+  for (const card of cards) {
+    const img = document.createElement('img');
+    img.src = getCardImageUrl(card.id);
+    img.alt = card.name;
+    modalCards.appendChild(img);
+  }
+
+  // Show the modal
+  modal.classList.remove('hidden');
+}
+
+// Close button listener (only needs to be set once)
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('daily-modal').classList.add('hidden');
+});
 
 // --------------- CARDS ----------------
 
@@ -315,6 +346,8 @@ function pickWeightedRarity(weights) {
 
 async function giveCardsToUser(cards) {
   for (const card of cards) {
+    console.log(`Attempting to give card ${card.name} (ID: ${card.id}) to user ${currentUser.id}`);
+
     const { data: existing, error } = await supabase
       .from('user_cards')
       .select('quantity')
@@ -323,26 +356,36 @@ async function giveCardsToUser(cards) {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Card fetch error:', error);
+      console.error('Error checking for existing card:', error);
       continue;
     }
 
     if (existing) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('user_cards')
         .update({ quantity: existing.quantity + 1 })
         .eq('user_id', currentUser.id)
         .eq('card_id', card.id);
+
+      if (updateError) {
+        console.error('Failed to update quantity:', updateError);
+      } else {
+        console.log(`Updated quantity of card ${card.id}`);
+      }
     } else {
-      await supabase
+      const { error: insertError } = await supabase
         .from('user_cards')
         .insert({
           user_id: currentUser.id,
           card_id: card.id,
           quantity: 1
         });
+
+      if (insertError) {
+        console.error('Failed to insert new card:', insertError);
+      } else {
+        console.log(`Inserted new card ${card.id}`);
+      }
     }
   }
-
-  console.log("Cards saved to user inventory.");
 }
