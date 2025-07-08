@@ -1,6 +1,6 @@
 // Supabase setup
 const SUPABASE_URL = 'https://cbzkrfqhtofxaypsisdg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiemtyZnFodG9meGF5cHNpc2RnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MzAzMjIsImV4cCI6MjA2NzUwNjMyMn0._sNhhbWUih9NUhlENcphukX-74Q7imzMg5w-ZQh0oW4';
+const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLIC_ANON_KEY'; // Replace with your real key
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.supabaseClient = supabase; // helpful for debugging
 
@@ -12,7 +12,7 @@ const dailyButton = document.getElementById('daily-button');
 const timerText = document.getElementById('timer-text');
 
 // Constants
-const claimCooldown = 24 * 60 * 60 * 1000; // 24 hours in ms
+const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
 
 // Event listeners
@@ -21,10 +21,10 @@ document.getElementById('login-discord').addEventListener('click', () => login('
 document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
 
-// 🔁 Restore session on load
+// Try to restore session
 checkUserSession();
 
-// 🎧 React to manual login/logout
+// Listen for auth changes
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
     await createUserIfNotExists(session.user);
@@ -37,7 +37,12 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 // --------------------- AUTH ----------------------
 
 async function login(provider) {
-  const { error } = await supabase.auth.signInWithOAuth({ provider });
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: window.location.origin + window.location.pathname
+    }
+  });
   if (error) console.error('Login error:', error.message);
 }
 
@@ -45,10 +50,8 @@ async function logout() {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-
     currentUser = null;
     showLogin();
-    console.log("User successfully signed out.");
   } catch (err) {
     console.error("Logout error:", err.message || err);
   }
@@ -58,9 +61,7 @@ async function checkUserSession(retry = 0) {
   try {
     const { data, error } = await supabase.auth.getSession();
 
-    // Wait for Supabase to become ready (Firefox quirk)
     if (!data?.session && retry < 5) {
-      console.warn("Waiting for session to be ready...");
       return setTimeout(() => checkUserSession(retry + 1), 300);
     }
 
@@ -74,7 +75,6 @@ async function checkUserSession(retry = 0) {
     } else {
       showLogin();
     }
-
   } catch (err) {
     console.error("checkUserSession crash:", err);
     showLogin();
@@ -89,22 +89,18 @@ async function createUserIfNotExists(user) {
     .single();
 
   if (error && error.code === 'PGRST116') {
-    // User not found, create it
     const { error: insertError } = await supabase.from('users').insert({
       id: user.id,
       email: user.email,
       last_daily_claim: null,
     });
-
-    if (insertError) {
-      console.error('Failed to create user:', insertError);
-    }
+    if (insertError) console.error('User creation failed:', insertError);
   } else if (error) {
     console.error('User fetch error:', error);
   }
 }
 
-// ------------------- UI CONTROL ------------------
+// ------------------- UI ------------------
 
 function showLogin() {
   authUI.style.display = 'block';
@@ -119,7 +115,7 @@ function showGame(user) {
   checkDailyStatus();
 }
 
-// --------------- DAILY PACK LOGIC ----------------
+// ---------------- DAILY ------------------
 
 async function checkDailyStatus() {
   const { data, error } = await supabase
@@ -150,7 +146,6 @@ async function checkDailyStatus() {
 
 function startCountdown(duration) {
   const endTime = Date.now() + duration;
-
   const interval = setInterval(() => {
     const msLeft = endTime - Date.now();
     if (msLeft <= 0) {
@@ -182,20 +177,15 @@ async function claimDailyPack() {
   }
 
   await giveCardsToUser(newCards);
-
   console.log("You got:");
-  newCards.forEach(card => {
-    console.log(`- ${card.name} [${card.rarity}]`);
-  });
-
+  newCards.forEach(card => console.log(`- ${card.name} [${card.rarity}]`));
   checkDailyStatus();
 }
 
-// --------------- CARD LOGIC ----------------
+// --------------- CARDS ----------------
 
 async function getRandomCardPack() {
   const { data: cards, error } = await supabase.from('cards').select('*');
-
   if (error) {
     console.error('Card fetch error:', error);
     return [];
@@ -208,13 +198,7 @@ async function getRandomCardPack() {
     Legendary: cards.filter(c => c.rarity === 'Legendary'),
   };
 
-  const weights = {
-    Common: 70,
-    Uncommon: 20,
-    Rare: 8,
-    Legendary: 2,
-  };
-
+  const weights = { Common: 70, Uncommon: 20, Rare: 8, Legendary: 2 };
   const result = [];
 
   for (let i = 0; i < 5; i++) {
@@ -228,11 +212,9 @@ async function getRandomCardPack() {
 }
 
 function pickWeightedRarity(weights) {
-  const entries = Object.entries(weights);
-  const totalWeight = entries.reduce((sum, [, w]) => sum + w, 0);
-  let rand = Math.random() * totalWeight;
-
-  for (const [rarity, weight] of entries) {
+  const total = Object.values(weights).reduce((a, b) => a + b, 0);
+  let rand = Math.random() * total;
+  for (const [rarity, weight] of Object.entries(weights)) {
     if (rand < weight) return rarity;
     rand -= weight;
   }
@@ -249,7 +231,7 @@ async function giveCardsToUser(cards) {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Fetch error:', error);
+      console.error('Card fetch error:', error);
       continue;
     }
 
