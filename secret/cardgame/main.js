@@ -21,14 +21,14 @@ document.getElementById('login-discord').addEventListener('click', () => login('
 document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
 
-// Filter Owned
-const filterOwnedButton = document.getElementById('filter-owned');
+// Toggle Owned
+const filterOwnedButton = document.getElementById('toggle-owned');
 let filterOwnedOnly = false;
 
-filterOwnedButton.addEventListener('click', () => {
+document.getElementById('toggle-owned').addEventListener('click', () => {
   filterOwnedOnly = !filterOwnedOnly;
-  filterOwnedButton.classList.toggle('active', filterOwnedOnly);
-  renderCardGrid(); // re-render the grid with the filter
+  document.getElementById('toggle-owned').classList.toggle('active', filterOwnedOnly);
+  renderCardGrid();
 });
 
 // Try to restore session
@@ -129,7 +129,6 @@ async function showGame(user) {
   authUI.style.display = 'none';
   gameUI.style.display = 'block';
   checkDailyStatus();
-  renderCardGrid();
   await renderCardGrid();
 }
 
@@ -153,11 +152,15 @@ async function renderCardGrid() {
   }
 
   // Always sort by rarity, then name
-  const rarityOrder = { Common: 1, Uncommon: 2, Rare: 3, Legendary: 4 };
-  const cardsToDisplay = [...allCards].sort((a, b) => {
+  const rarityOrder = { common: 1, uncommon: 2, rare: 3, legendary: 4 };
+  let cardsToDisplay = [...allCards].sort((a, b) => {
     const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
     return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
   });
+
+  if (filterOwnedOnly) {
+    cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
+  }
 
   for (const card of cardsToDisplay) {
     const quantity = cardMap.get(card.id) || 0;
@@ -302,13 +305,13 @@ async function getRandomCardPack() {
   }
 
   const byRarity = {
-    Common: cards.filter(c => c.rarity === 'common'),
-    Uncommon: cards.filter(c => c.rarity === 'uncommon'),
-    Rare: cards.filter(c => c.rarity === 'rare'),
-    Legendary: cards.filter(c => c.rarity === 'legendary'),
+    common: cards.filter(c => c.rarity === 'common'),
+    uncommon: cards.filter(c => c.rarity === 'uncommon'),
+    rare: cards.filter(c => c.rarity === 'rare'),
+    legendary: cards.filter(c => c.rarity === 'legendary'),
   };
 
-  const weights = { Common: 70, Uncommon: 20, Rare: 8, Legendary: 2 };
+  const weights = { common: 70, uncommon: 20, rare: 8, legendary: 2 };
   const result = [];
 
   for (let i = 0; i < 5; i++) {
@@ -325,10 +328,10 @@ async function getRandomCardPack() {
   }
 
   console.log("Cards by rarity:", {
-    Common: byRarity.Common.length,
-    Uncommon: byRarity.Uncommon.length,
-    Rare: byRarity.Rare.length,
-    Legendary: byRarity.Legendary.length,
+    common: byRarity.common.length,
+    uncommon: byRarity.uncommon.length,
+    rare: byRarity.rare.length,
+    legendary: byRarity.legendary.length,
   });
 
   return result;
@@ -341,7 +344,7 @@ function pickWeightedRarity(weights) {
     if (rand < weight) return rarity;
     rand -= weight;
   }
-  return 'Common';
+  return 'common';
 }
 
 async function giveCardsToUser(cards) {
@@ -353,7 +356,7 @@ async function giveCardsToUser(cards) {
       .select('quantity')
       .eq('user_id', currentUser.id)
       .eq('card_id', card.id)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
       console.error('Error checking for existing card:', error);
