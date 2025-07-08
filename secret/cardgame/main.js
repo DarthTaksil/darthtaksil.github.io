@@ -15,24 +15,11 @@ const timerText = document.getElementById('timer-text');
 const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
 
-let sortByRarity = false;
-let filterOwnedOnly = false;
-
 // Event listeners
 document.getElementById('login-google').addEventListener('click', () => login('google'));
 document.getElementById('login-discord').addEventListener('click', () => login('discord'));
 document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
-
-document.getElementById('sort-rarity').addEventListener('click', () => {
-  sortByRarity = !sortByRarity;
-  renderCardGrid();
-});
-
-document.getElementById('filter-owned').addEventListener('click', () => {
-  filterOwnedOnly = !filterOwnedOnly;
-  renderCardGrid();
-});
 
 // Try to restore session
 checkUserSession();
@@ -130,13 +117,6 @@ async function showGame(user) {
   await renderCardGrid();
 }
 
-let sortMode = 'id';
-
-function setSortMode(mode) {
-  sortMode = mode;
-  renderCardGrid();
-}
-
 async function renderCardGrid() {
   const grid = document.getElementById('card-grid');
   grid.innerHTML = '';
@@ -156,24 +136,7 @@ async function renderCardGrid() {
     cardMap.set(uc.card_id, uc.quantity);
   }
 
-  let cardsToDisplay = [...allCards];
-
-  if (filterOwnedOnly) {
-    cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
-  }
-
-// Sort cards based on selected mode
-if (sortMode === 'rarity') {
-  const rarityOrder = { 'Legendary': 3, 'Rare': 2, 'Uncommon': 1, 'Common': 0 };
-  allCards.sort((a, b) => {
-    const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
-    return rarityDiff !== 0 ? rarityDiff : a.id - b.id; // Secondary sort by ID
-  });
-} else {
-  allCards.sort((a, b) => a.id - b.id);
-}
-
-  for (const card of cardsToDisplay) {
+  for (const card of allCards) {
     const quantity = cardMap.get(card.id) || 0;
     const imgPath = `./cards/${String(card.id).padStart(3, '0')}.png`;
 
@@ -196,7 +159,6 @@ if (sortMode === 'rarity') {
     grid.appendChild(cardDiv);
   }
 }
-
 
 // ---------------- DAILY ------------------
 
