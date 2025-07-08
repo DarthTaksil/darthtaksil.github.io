@@ -130,6 +130,13 @@ async function showGame(user) {
   await renderCardGrid();
 }
 
+let sortMode = 'id';
+
+function setSortMode(mode) {
+  sortMode = mode;
+  renderCardGrid();
+}
+
 async function renderCardGrid() {
   const grid = document.getElementById('card-grid');
   grid.innerHTML = '';
@@ -155,16 +162,16 @@ async function renderCardGrid() {
     cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
   }
 
-  if (sortByRarity) {
-    const rarityOrder = { Common: 1, Uncommon: 2, Rare: 3, Legendary: 4 };
-    cardsToDisplay.sort((a, b) => {
-      const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
-      return rarityDiff !== 0 ? rarityDiff : a.name.localeCompare(b.name);
-    });
-  } else {
-    // Default sort by ID
-    cardsToDisplay.sort((a, b) => a.id - b.id);
-  }
+// Sort cards based on selected mode
+if (sortMode === 'rarity') {
+  const rarityOrder = { 'Legendary': 3, 'Rare': 2, 'Uncommon': 1, 'Common': 0 };
+  allCards.sort((a, b) => {
+    const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+    return rarityDiff !== 0 ? rarityDiff : a.id - b.id; // Secondary sort by ID
+  });
+} else {
+  allCards.sort((a, b) => a.id - b.id);
+}
 
   for (const card of cardsToDisplay) {
     const quantity = cardMap.get(card.id) || 0;
