@@ -36,11 +36,23 @@ document.getElementById('toggle-owned').addEventListener('click', () => {
   renderCardGrid();
 });
 
-// Listen for auth changes
-supabase.auth.onAuthStateChange(async (event, session) => {
+// Rehydrate session after page load
+supabase.auth.getSession().then(({ data: { session } }) => {
   if (session?.user) {
-    await createUserIfNotExists(session.user);
-    showGame(session.user);
+    currentUser = session.user;
+    createUserIfNotExists(currentUser);
+    showGame(currentUser);
+  } else {
+    showLogin();
+  }
+});
+
+// Listen for future logins or logouts
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    createUserIfNotExists(currentUser);
+    showGame(currentUser);
   } else {
     showLogin();
   }
