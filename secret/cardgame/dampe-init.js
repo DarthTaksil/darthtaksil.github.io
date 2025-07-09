@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+   showUserInfo(currentUser);
+
   // Attach dig event
   document.getElementById("digBtn").addEventListener("click", async () => {
     let resultText = "";
