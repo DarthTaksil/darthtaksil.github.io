@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let resultText = "";
 
     const roll = Math.random();
-    if (roll < 0.02) 
+    if (roll < 0.06) 
     {
         const card = await giveRandomCardToUser(currentUser.id);
         showCardModal(card);
