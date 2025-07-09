@@ -36,9 +36,6 @@ document.getElementById('toggle-owned').addEventListener('click', () => {
   renderCardGrid();
 });
 
-// Try to restore session
-checkUserSession();
-
 // Listen for auth changes
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (session?.user) {
@@ -417,3 +414,14 @@ async function giveCardsToUser(cards) {
     }
   }
 }
+
+// Safe session restore
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session?.user) {
+    currentUser = session.user;
+    createUserIfNotExists(currentUser);
+    showGame(currentUser);
+  } else {
+    showLogin();
+  }
+});
