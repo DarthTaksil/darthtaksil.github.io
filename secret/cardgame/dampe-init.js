@@ -2,6 +2,7 @@ import { getCurrentUser } from './shared/auth.js';
 import { giveRandomCardToUser } from './shared/cards.js';
 
 let currentUser = null;
+let isCooldown = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
   currentUser = await getCurrentUser();
@@ -18,15 +19,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cooldown Circle 
 
-    let isCooldown = false;
     const cooldownDuration = 5000; // 5 seconds
     const cooldownCircle = document.querySelector('.cooldown-progress');
     const fullDash = 2 * Math.PI * 45; // same radius as SVG circle
 
     function startCooldown() {
-    isCooldown = true;
-    document.getElementById("digBtn").disabled = true;
-    let start = Date.now();
+        isCooldown = true;
+        document.getElementById("digBtn").disabled = true;
+        let start = Date.now();
 
     function update() {
         const elapsed = Date.now() - start;
@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         cooldownCircle.style.strokeDashoffset = fullDash * progress;
 
         if (remaining > 0) {
-        requestAnimationFrame(update);
+            requestAnimationFrame(update);
         } else {
-        isCooldown = false;
-        document.getElementById("digBtn").disabled = false;
-        cooldownCircle.style.strokeDashoffset = 0;
+            isCooldown = false;
+            document.getElementById("digBtn").disabled = false;
+            cooldownCircle.style.strokeDashoffset = 0;
         }
     }
 
