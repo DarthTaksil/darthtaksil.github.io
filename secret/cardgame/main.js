@@ -22,12 +22,16 @@ document.getElementById('logout').addEventListener('click', logout);
 dailyButton.addEventListener('click', claimDailyPack);
 
 // Toggle Owned
-const filterOwnedButton = document.getElementById('toggle-owned');
-let filterOwnedOnly = false;
+const toggleOwnedButton = document.getElementById('toggle-owned');
+let toggleOwnedOnly = false;
 
 document.getElementById('toggle-owned').addEventListener('click', () => {
-  filterOwnedOnly = !filterOwnedOnly;
-  document.getElementById('toggle-owned').classList.toggle('active', filterOwnedOnly);
+  toggleOwnedOnly = !toggleOwnedOnly;
+
+  const toggleButton = document.getElementById('toggle-owned');
+  toggleButton.classList.toggle('active', toggleOwnedOnly);
+  toggleButton.textContent = toggleOwnedOnly ? 'Show All Cards' : 'Only Show Owned';
+
   renderCardGrid();
 });
 
@@ -159,7 +163,7 @@ async function renderCardGrid() {
     return a.id - b.id; // Sort by numeric ID after rarity
   });
 
-  if (filterOwnedOnly) {
+  if (toggleOwnedOnly) {
     cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
   }
 
