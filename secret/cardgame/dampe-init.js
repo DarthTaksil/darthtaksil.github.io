@@ -28,69 +28,71 @@ document.addEventListener("DOMContentLoaded", async () => {
     digBtn.disabled = true;
     fill.style.transition = "none";
     fill.style.width = "0%";
-
-    // Allow one frame for style reset
     requestAnimationFrame(() => {
         fill.style.transition = `width ${cooldownDuration}ms linear`;
         fill.style.width = "100%";
     });
 
-    // Dig
+    try {
+        let resultText = "";
+        const resultImg = new Image();
+        const roll = Math.random();
 
-    let resultText = "";
-    const resultImg = new Image();
-
-    const roll = Math.random();
-    if (roll < 0.06) 
-    {
+        if (roll < 0.06) {
         const card = await giveRandomCardToUser(currentUser.id);
         showCardModal(card);
         addCardToSidebar(card);
-        return;
-    }
-
-     else if (roll < 0.50) 
-    {
+        resultText = "You found a card!";
+        } else if (roll < 0.50) {
         resultText = "Green Rupee";
         resultImg.src = "/images/grnrup.png";
-    }
-
-     else if (roll < 0.80) 
-    {
+        } else if (roll < 0.80) {
         resultText = "Blue Rupee";
         resultImg.src = "/images/blurup.png";
-    }
-
-     else 
-    {
+        } else {
         resultText = "Red Rupee";
         resultImg.src = "/images/redrup.png";
-    }
+        }
 
-    const resultDiv = document.getElementById('dig-result');
-    resultDiv.innerHTML = ""; // clear any previous content
+        const resultDiv = document.getElementById('dig-result');
+        resultDiv.innerHTML = "";
 
-    // Adds image to dig result
-    resultImg.classList.add('result-img');
-    resultDiv.appendChild(resultImg);
+        if (resultImg.src) {
+        resultImg.classList.add('result-img');
+        resultDiv.appendChild(resultImg);
+        }
 
-    // Adds text to dig result
-    const textEl = document.createElement('div');
-    textEl.textContent = resultText;
-    resultDiv.appendChild(textEl);
-    
-    console.log("You got:", resultText);
-
-    // Reset Cooldown -------
-            setTimeout(() => {
+        const textEl = document.createElement('div');
+        textEl.textContent = resultText;
+        resultDiv.appendChild(textEl);
+    } finally {
+        setTimeout(() => {
             fill.style.transition = "none";
             fill.style.width = "0%";
             digBtn.disabled = false;
             isCooldown = false;
-        }, cooldownDuration);
-    });
 
-  });
+            // Flash the Dig button
+            digBtn.classList.add('flash');
+            setTimeout(() => digBtn.classList.remove('flash'), 600);
+        }, cooldownDuration);
+
+        // Start fade-out on result
+        const resultDiv = document.getElementById('dig-result');
+        resultDiv.classList.add('fade-out');
+        setTimeout(() => {
+            resultDiv.classList.add('hide');
+        }, 100); // Slight delay so transition applies
+
+        // Reset result after fade
+        setTimeout(() => {
+            resultDiv.innerHTML = "";
+            resultDiv.classList.remove('fade-out', 'hide');
+        }, 4100);
+        }
+
+    });
+});
 
 // show card obtained
 function showCardModal(card) {
