@@ -13,39 +13,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
    showUserInfo(currentUser);
 
-  document.getElementById("digBtn").addEventListener("click", async () => {
-    if (isCooldown) return; // prevent spamming
-    startCooldown(); // begin cooldown
-
-    // Cooldown Circle 
-
     const cooldownDuration = 5000; // 5 seconds
-    const cooldownCircle = document.querySelector('.cooldown-progress');
-    const fullDash = 2 * Math.PI * 45; // same radius as SVG circle
+    let isCooldown = false;
 
-    function startCooldown() {
-        isCooldown = true;
-        document.getElementById("digBtn").disabled = true;
-        let start = Date.now();
+    document.getElementById("digBtn").addEventListener("click", async () => {
 
-    function update() {
-        const elapsed = Date.now() - start;
-        const remaining = Math.max(0, cooldownDuration - elapsed);
-        const progress = remaining / cooldownDuration;
+    if (isCooldown) return;
+    isCooldown = true;
 
-        cooldownCircle.style.strokeDashoffset = fullDash * progress;
+    const digBtn = document.getElementById("digBtn");
+    const fill = digBtn.querySelector(".dig-fill");
 
-        if (remaining > 0) {
-            requestAnimationFrame(update);
-        } else {
-            isCooldown = false;
-            document.getElementById("digBtn").disabled = false;
-            cooldownCircle.style.strokeDashoffset = 0;
-        }
-    }
+    // Start cooldown visual
+    digBtn.disabled = true;
+    fill.style.transition = "none";
+    fill.style.width = "0%";
 
-    requestAnimationFrame(update);
-    }
+    // Allow one frame for style reset
+    requestAnimationFrame(() => {
+        fill.style.transition = `width ${cooldownDuration}ms linear`;
+        fill.style.width = "100%";
+    });
 
     // Dig
 
@@ -82,19 +70,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     const resultDiv = document.getElementById('dig-result');
     resultDiv.innerHTML = ""; // clear any previous content
 
-    // Add image first
+    // Adds image to dig result
     resultImg.classList.add('result-img');
     resultDiv.appendChild(resultImg);
 
-    // Then add text
+    // Adds text to dig result
     const textEl = document.createElement('div');
     textEl.textContent = resultText;
     resultDiv.appendChild(textEl);
     
     console.log("You got:", resultText);
 
+    // Reset Cooldown -------
+            setTimeout(() => {
+            fill.style.transition = "none";
+            fill.style.width = "0%";
+            digBtn.disabled = false;
+            isCooldown = false;
+        }, cooldownDuration);
+    });
+
   });
-});
 
 // show card obtained
 function showCardModal(card) {
