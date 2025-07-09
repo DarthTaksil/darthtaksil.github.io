@@ -14,6 +14,7 @@ const timerText = document.getElementById('timer-text');
 // Constants
 const claimCooldown = 24 * 60 * 60 * 1000;
 let currentUser = null;
+let hasInitialized = false; // prevents duplicate calls
 
 // Event listeners
 document.getElementById('login-google').addEventListener('click', () => login('google'));
@@ -85,6 +86,7 @@ async function checkUserSession(retry = 0) {
     } else if (data?.session?.user) {
       currentUser = data.session.user;
       await createUserIfNotExists(currentUser);
+      showGame(currentUser);
     } else {
       showLogin();
     }
@@ -99,7 +101,7 @@ async function createUserIfNotExists(user) {
     .from('users')
     .select('id')
     .eq('id', user.id)
-    .maybeSingle();  // Use maybeSingle instead of single()
+    .maybeSingle();
 
   if (error && status !== 406) {
     console.error('User fetch error:', error);
@@ -127,6 +129,9 @@ function showLogin() {
 }
 
 async function showGame(user) {
+  if (hasInitialized) return;
+  hasInitialized = true;
+
   currentUser = user;
   userEmail.textContent = user.email || user.user_metadata.full_name || 'Player';
   authUI.style.display = 'none';
@@ -154,17 +159,17 @@ async function renderCardGrid() {
     cardMap.set(uc.card_id, uc.quantity);
   }
 
-  // Always sort by rarity, then name
   const rarityOrder = { common: 1, uncommon: 2, rare: 3, legendary: 4 };
-  const cardsToDisplay = [...allCards].sort((a, b) => {
-    const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
-    if (rarityDiff !== 0) return rarityDiff;
-    return a.id - b.id; // Sort by numeric ID after rarity
-  });
+  let cardsToDisplay = [...allCards];
 
   if (toggleOwnedOnly) {
     cardsToDisplay = cardsToDisplay.filter(card => cardMap.has(card.id));
   }
+
+  cardsToDisplay.sort((a, b) => {
+    const rarityDiff = rarityOrder[a.rarity] - rarityOrder[b.rarity];
+    return rarityDiff !== 0 ? rarityDiff : a.id - b.id;
+  });
 
   for (const card of cardsToDisplay) {
     const quantity = cardMap.get(card.id) || 0;
