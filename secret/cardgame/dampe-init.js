@@ -50,7 +50,7 @@ function showCardModal(card) {
   cardSlot.innerHTML = ""; // clear old card
 
   const img = document.createElement("img");
-  img.src = `/cards/${String(card.id).padStart(3, '0')}.png`;
+  img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
   img.alt = card.name;
   cardSlot.appendChild(img);
 
@@ -74,7 +74,7 @@ function addCardToSidebar(card) {
   const item = document.createElement('li');
 
   const img = document.createElement('img');
-  img.src = `/cards/${String(card.id).padStart(3, '0')}.png`;
+  img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
   img.alt = card.name;
 
   const label = document.createElement('span');
