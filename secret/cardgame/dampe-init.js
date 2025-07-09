@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Attach dig event
   document.getElementById("digBtn").addEventListener("click", async () => {
+    let resultText = "";
+
     const roll = Math.random();
     if (roll < 0.10) 
     {
@@ -35,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         resultText = "Red Rupee";
     }
 
+    console.log("You got:", resultText);
   });
 });
 
