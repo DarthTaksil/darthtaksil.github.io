@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Attach dig event
   document.getElementById("digBtn").addEventListener("click", async () => {
     let resultText = "";
+    const resultImg = new Image();
 
     const roll = Math.random();
     if (roll < 0.06) 
@@ -27,18 +28,22 @@ document.addEventListener("DOMContentLoaded", async () => {
      else if (roll < 0.50) 
     {
         resultText = "Green Rupee";
+        resultImg = "/images/grnrup.png";
     }
 
      else if (roll < 0.80) 
     {
         resultText = "Blue Rupee";
+        resultImg = "/images/blurup.png";
     }
 
      else 
     {
         resultText = "Red Rupee";
+        resultImg = "/images/redrup.png";
     }
 
+    document.getElementById('dig-result').textContent = resultText;
     console.log("You got:", resultText);
 
   });
