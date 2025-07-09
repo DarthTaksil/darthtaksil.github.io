@@ -12,8 +12,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
    showUserInfo(currentUser);
 
-  // Attach dig event
   document.getElementById("digBtn").addEventListener("click", async () => {
+    if (isCooldown) return; // prevent spamming
+    startCooldown(); // begin cooldown
+
+    // Cooldown Circle 
+
+    let isCooldown = false;
+    const cooldownDuration = 5000; // 5 seconds
+    const cooldownCircle = document.querySelector('.cooldown-progress');
+    const fullDash = 2 * Math.PI * 45; // same radius as SVG circle
+
+    function startCooldown() {
+    isCooldown = true;
+    document.getElementById("digBtn").disabled = true;
+    let start = Date.now();
+
+    function update() {
+        const elapsed = Date.now() - start;
+        const remaining = Math.max(0, cooldownDuration - elapsed);
+        const progress = remaining / cooldownDuration;
+
+        cooldownCircle.style.strokeDashoffset = fullDash * progress;
+
+        if (remaining > 0) {
+        requestAnimationFrame(update);
+        } else {
+        isCooldown = false;
+        document.getElementById("digBtn").disabled = false;
+        cooldownCircle.style.strokeDashoffset = 0;
+        }
+    }
+
+    requestAnimationFrame(update);
+    }
+
+    // Dig
+
     let resultText = "";
     const resultImg = new Image();
 
@@ -46,8 +81,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const resultDiv = document.getElementById('dig-result');
     resultDiv.innerHTML = ""; // clear any previous content
-    resultDiv.textContent = resultText;
+
+    // Add image first
+    resultImg.classList.add('result-img');
     resultDiv.appendChild(resultImg);
+
+    // Then add text
+    const textEl = document.createElement('div');
+    textEl.textContent = resultText;
+    resultDiv.appendChild(textEl);
     
     console.log("You got:", resultText);
 
