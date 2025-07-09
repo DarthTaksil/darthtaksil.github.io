@@ -133,9 +133,13 @@ async function showGame(user) {
   hasInitialized = true;
 
   currentUser = user;
-  userEmail.textContent = user.email || user.user_metadata.full_name || 'Player';
+
+  const meta = user.user_metadata || {};
+  userEmail.textContent = meta.full_name || meta.name || meta.preferred_username || meta.user_name || 'Player'; // Sets username
+
   authUI.style.display = 'none';
   gameUI.style.display = 'block';
+
   checkDailyStatus();
   await renderCardGrid();
 }
