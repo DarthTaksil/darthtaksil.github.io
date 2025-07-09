@@ -85,7 +85,6 @@ async function checkUserSession(retry = 0) {
     } else if (data?.session?.user) {
       currentUser = data.session.user;
       await createUserIfNotExists(currentUser);
-      showGame(currentUser);
     } else {
       showLogin();
     }
@@ -176,6 +175,7 @@ async function renderCardGrid() {
     if (quantity > 0) cardDiv.classList.add('owned');
 
     const img = document.createElement('img');
+    img.loading = 'lazy';
     img.src = imgPath;
     img.alt = card.name;
     cardDiv.appendChild(img);
