@@ -81,7 +81,7 @@ function addCardToSidebar(card) {
   label.textContent = card.name;
 
   item.appendChild(img);
-  item.appendChild(label);
+//  item.appendChild(label); //
   list.appendChild(item);
 }
 
