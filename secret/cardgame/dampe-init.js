@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let resultText = "";
 
     const roll = Math.random();
-    if (roll < 0.10) 
+    if (roll < 0.02) 
     {
         const card = await giveRandomCardToUser(currentUser.id);
         showCardModal(card);
@@ -40,22 +40,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("You got:", resultText);
+
   });
 });
 
 // show card obtained
 function showCardModal(card) {
-  const modal = document.getElementById("daily-modal");
-  const cardSlot = document.getElementById("modal-cards");
-  cardSlot.innerHTML = ""; // clear old card
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('daily-modal');
+  const modalCards = document.getElementById('modal-cards');
+  const modalDate = document.getElementById('modal-date');
 
-  const img = document.createElement("img");
+  modalDate.textContent = 'You dug up a card!';
+  modalCards.innerHTML = '';
+
+  const img = document.createElement('img');
   img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
   img.alt = card.name;
-  cardSlot.appendChild(img);
+  modalCards.appendChild(img);
 
-  modal.classList.remove("hidden");
+  overlay.classList.remove('hidden');
 }
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('modal-overlay').classList.add('hidden');
+});
 
 // After user is verified
 function showUserInfo(user) {
@@ -84,8 +93,3 @@ function addCardToSidebar(card) {
 //  item.appendChild(label); //
   list.appendChild(item);
 }
-
-
-document.getElementById('modal-close').addEventListener('click', () => {
-  document.getElementById('daily-modal').classList.add('hidden');
-});
