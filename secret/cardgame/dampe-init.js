@@ -23,27 +23,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         const card = await giveRandomCardToUser(currentUser.id);
         showCardModal(card);
         addCardToSidebar(card);
+        return;
     }
 
      else if (roll < 0.50) 
     {
         resultText = "Green Rupee";
-        resultImg = "/images/grnrup.png";
+        resultImg.src = "/images/grnrup.png";
     }
 
      else if (roll < 0.80) 
     {
         resultText = "Blue Rupee";
-        resultImg = "/images/blurup.png";
+        resultImg.src = "/images/blurup.png";
     }
 
      else 
     {
         resultText = "Red Rupee";
-        resultImg = "/images/redrup.png";
+        resultImg.src = "/images/redrup.png";
     }
 
-    document.getElementById('dig-result').textContent = resultText;
+    const resultDiv = document.getElementById('dig-result');
+    resultDiv.innerHTML = ""; // clear any previous content
+    resultDiv.textContent = resultText;
+    resultDiv.appendChild(resultImg);
+    
     console.log("You got:", resultText);
 
   });
@@ -77,11 +82,6 @@ function showUserInfo(user) {
   const username = meta.full_name || meta.name || meta.preferred_username || 'Player';
   document.getElementById('dampe-user-name').textContent = username;
 }
-
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  window.location.href = '/index.html';
-});
 
 function addCardToSidebar(card) {
   const list = document.getElementById('dampe-card-list');
