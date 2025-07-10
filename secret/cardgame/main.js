@@ -278,6 +278,7 @@ async function claimBoostPack() {
 
   showBoostModal(cards);
   checkBoostStatus();
+  await renderCardGrid();
 }
 
 // Keep outside of claimBoostPack()
