@@ -319,9 +319,10 @@ function showBoostModal(cards) {
 // Close button listener (only needs to be set once)
 const closeModalButton = document.getElementById('boost-modal-close');
 const boostModal = document.getElementById('boost-modal');
+
 if (closeModalButton && boostModal) {
   closeModalButton.addEventListener('click', () => {
-    modal.classList.add('hidden');
+    boostModal.classList.add('hidden');
   });
 }
 
@@ -440,7 +441,7 @@ function startCountdown(durationMs) {
     const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-    timerText.textContent = `Next boost in ${hours}h ${minutes}m ${seconds}s`;
+    timerText.textContent = `Next Boost Pack in ${hours}h ${minutes}m ${seconds}s`;
     requestAnimationFrame(update); // smoother than setInterval
   }
 
