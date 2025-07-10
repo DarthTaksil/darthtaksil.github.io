@@ -420,3 +420,27 @@ async function giveCardsToUser(cards) {
     }
   }
 }
+
+function startCountdown(durationMs) {
+  const timerText = document.getElementById('timer-text');
+  const endTime = Date.now() + durationMs;
+
+  function update() {
+    const remaining = endTime - Date.now();
+    if (remaining <= 0) {
+      timerText.textContent = 'You can now claim your boost!';
+      boostButton.disabled = false;
+      boostButton.style.opacity = 1;
+      return;
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    timerText.textContent = `Next boost in ${hours}h ${minutes}m ${seconds}s`;
+    requestAnimationFrame(update); // smoother than setInterval
+  }
+
+  update();
+}
