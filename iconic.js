@@ -14,5 +14,8 @@ const goldVideoList = [
     "8OPfDIuuKgI",
     "8nGKtgs30GA",
     "N0Jb7GRvD0k",
-    "O0TxBsIHuoE"
+    "O0TxBsIHuoE",
+    "Bm0sJOBYnok",
+    "XGEku6FCTrQ",
+    "a-TF4eaMeCQ"
 ];
