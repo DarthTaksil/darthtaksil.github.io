@@ -288,11 +288,13 @@ function getCardImageUrl(cardId) {
 
 function showBoostModal(cards) {
   const modal = document.getElementById('boost-modal');
-  modal.className = 'boost-modal';
-  const modalCards = document.getElementById('boost-modal-cards');
-  modalCards.className = 'boost-modal-cards';
+  const modalCards = document.getElementById('modal-cards');
   const modalDate = document.getElementById('boost-modal-date');
-  modalDate.className = 'boost-modal-date';
+
+  if (!modal || !modalCards || !modalDate) {
+    console.warn("Boost modal elements not found on this page.");
+    return;
+  }
 
   // Set today's date
   const today = new Date();
@@ -314,8 +316,7 @@ function showBoostModal(cards) {
     modalCards.appendChild(img);
   }
 
-  // Show the modal
-  modal.classList.remove('hidden');
+  modal.classList.remove('boost-modal-hidden');
 }
 
 // Close button listener (only needs to be set once)
