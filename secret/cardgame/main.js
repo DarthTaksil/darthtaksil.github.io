@@ -277,7 +277,7 @@ async function claimBoostPack() {
     .eq('id', currentUser.id);
 
   showBoostModal(cards);
-  checkBoostStatus(); // now this makes sense
+  checkBoostStatus();
 }
 
 // Keep outside of claimBoostPack()
@@ -290,6 +290,10 @@ function showBoostModal(cards) {
   const modal = document.getElementById('boost-modal');
   const modalCards = document.getElementById('modal-cards');
   const modalDate = document.getElementById('boost-modal-date');
+
+  console.log("modal:", modal);
+  console.log("modalCards:", modalCards);
+  console.log("modalDate:", modalDate);
 
   // Exit early if any modal element is missing
   if (!modal || !modalCards || !modalDate) {
@@ -309,7 +313,7 @@ function showBoostModal(cards) {
     modalCards.appendChild(img);
   }
 
-  modal.classList.remove('boost-modal-hidden');
+  modal.classList.remove('hidden');
 }
 
 // Close button listener (only needs to be set once)
@@ -317,7 +321,7 @@ const closeModalButton = document.getElementById('boost-modal-close');
 const boostModal = document.getElementById('boost-modal');
 if (closeModalButton && boostModal) {
   closeModalButton.addEventListener('click', () => {
-    boostModal.classList.add('boost-modal-hidden');
+    modal.classList.add('hidden');
   });
 }
 
