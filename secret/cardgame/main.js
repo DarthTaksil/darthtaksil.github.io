@@ -12,7 +12,7 @@ const dailyButton = document.getElementById('daily-button');
 const timerText = document.getElementById('timer-text');
 
 // Constants
-const claimCooldown = 24 * 60 * 60 * 1000;
+const RESET_TIMES_UTC = [0, 12]; // 12AM & 12PM UTC
 let currentUser = null;
 let hasInitialized = false; // prevents duplicate calls
 
@@ -20,7 +20,7 @@ let hasInitialized = false; // prevents duplicate calls
 document.getElementById('login-google').addEventListener('click', () => login('google'));
 document.getElementById('login-discord').addEventListener('click', () => login('discord'));
 document.getElementById('logout').addEventListener('click', logout);
-dailyButton.addEventListener('click', claimDailyPack);
+dailyButton.addEventListener('click', claimBoostPack);
 
 // Toggle Owned
 const toggleOwnedButton = document.getElementById('toggle-owned');
@@ -210,9 +210,35 @@ async function renderCardGrid() {
 }
 
 
-// ---------------- DAILY ------------------
+// ---------------- BOOSTER PACK (formerly DAILY)  ------------------
 
-async function checkDailyStatus() {
+function getNextBoostReset() {
+  const now = new Date();
+  const utcHours = now.getUTCHours();
+
+  // Determine next reset time
+  let nextResetHour = RESET_TIMES_UTC.find(h => h > utcHours);
+  if (nextResetHour === undefined) nextResetHour = RESET_TIMES_UTC[0];
+
+  const resetTime = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    nextResetHour,
+    0,
+    0,
+    0
+  ));
+
+  // If we've passed all today’s reset times, move to tomorrow
+  if (resetTime <= now) {
+    resetTime.setUTCDate(resetTime.getUTCDate() + 1);
+  }
+
+  return resetTime;
+}
+
+async function checkBoostStatus() {
   const { data, error } = await supabase
     .from('users')
     .select('last_daily_claim')
@@ -220,76 +246,36 @@ async function checkDailyStatus() {
     .single();
 
   if (error) {
-    console.error('Daily fetch error:', error);
+    console.error('Boost fetch error:', error);
     return;
   }
 
   const lastClaim = data.last_daily_claim ? new Date(data.last_daily_claim) : null;
   const now = new Date();
-  const diff = lastClaim ? now - lastClaim : Infinity;
+  const nextReset = getNextBoostReset();
 
-  if (!lastClaim || diff >= claimCooldown) {
+  const resetWindowStart = new Date(nextReset.getTime() - 12 * 60 * 60 * 1000); // 12 hrs before next
+
+  if (!lastClaim || lastClaim < resetWindowStart) {
     dailyButton.disabled = false;
     dailyButton.style.opacity = 1;
     timerText.textContent = '';
   } else {
     dailyButton.disabled = true;
     dailyButton.style.opacity = 0.5;
-    startCountdown(claimCooldown - diff);
-  }
-}
-
-function startCountdown(duration) {
-  const endTime = Date.now() + duration;
-  const interval = setInterval(() => {
-    const msLeft = endTime - Date.now();
-    if (msLeft <= 0) {
-      clearInterval(interval);
-      timerText.textContent = '';
-      dailyButton.disabled = false;
-      dailyButton.style.opacity = 1;
-    } else {
-      const hours = Math.floor(msLeft / 3600000);
-      const minutes = Math.floor((msLeft % 3600000) / 60000);
-      const seconds = Math.floor((msLeft % 60000) / 1000);
-      timerText.textContent = `Next pack in ${hours}h ${minutes}m ${seconds}s`;
-    }
-  }, 1000);
-}
-
-async function claimDailyPack() {
-
-  // Disable the button right away
-  dailyButton.disabled = true;
-  dailyButton.style.opacity = 0.5;
-
-  const now = new Date().toISOString();
-  const newCards = await getRandomCardPack();
-
-  const { error } = await supabase
-    .from('users')
-    .update({ last_daily_claim: now })
-    .eq('id', currentUser.id);
-
-  if (error) {
-    console.error('Failed to update daily claim:', error);
-    // Re-enable button so user can retry
-    dailyButton.disabled = false;
-    dailyButton.style.opacity = 1;
-    return;
+    startCountdown(nextReset - now);
   }
 
-  await giveCardsToUser(newCards);
+  await supabase
+  .from('users')
+  .update({ last_daily_claim: new Date().toISOString() })
+  .eq('id', currentUser.id);
 
-  showDailyModal(newCards);
+checkBoostStatus();
 
-  await renderCardGrid();
-
-  // start countdown immediately after claim
-  checkDailyStatus();
 }
 
-// Keep outside of claimDailyPack()
+// Keep outside of claimBoostPack()
 function getCardImageUrl(cardId) {
   const paddedId = String(cardId).padStart(3, '0');
   return `./cards/${paddedId}.png`;
