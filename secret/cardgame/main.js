@@ -288,8 +288,11 @@ function getCardImageUrl(cardId) {
 
 function showBoostModal(cards) {
   const modal = document.getElementById('boost-modal');
+  modal.className = 'boost-modal';
   const modalCards = document.getElementById('boost-modal-cards');
+  modalCards.className = 'boost-modal-cards';
   const modalDate = document.getElementById('boost-modal-date');
+  modalDate.className = 'boost-modal-date';
 
   // Set today's date
   const today = new Date();
