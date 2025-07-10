@@ -8,7 +8,7 @@ window.supabaseClient = supabase; // helpful for debugging
 const authUI = document.getElementById('auth');
 const gameUI = document.getElementById('game');
 const userEmail = document.getElementById('user-email');
-const dailyButton = document.getElementById('daily-button');
+const boostButton = document.getElementById('boost-button');
 const timerText = document.getElementById('timer-text');
 
 // Constants
@@ -20,7 +20,7 @@ let hasInitialized = false; // prevents duplicate calls
 document.getElementById('login-google').addEventListener('click', () => login('google'));
 document.getElementById('login-discord').addEventListener('click', () => login('discord'));
 document.getElementById('logout').addEventListener('click', logout);
-dailyButton.addEventListener('click', claimBoostPack);
+boostButton.addEventListener('click', claimBoostPack);
 
 // Toggle Owned
 const toggleOwnedButton = document.getElementById('toggle-owned');
@@ -121,7 +121,7 @@ async function createUserIfNotExists(user) {
     const { error: insertError } = await supabase.from('users').insert({
       id: user.id,
       email: user.email,
-      last_daily_claim: null,
+      last_boost_claim: null,
     });
 
     if (insertError && insertError.code !== "23505") {
@@ -149,7 +149,7 @@ async function showGame(user) {
   authUI.style.display = 'none';
   gameUI.style.display = 'block';
 
-  checkDailyStatus();
+  checkBoostStatus();
   await renderCardGrid();
 }
 
@@ -241,7 +241,7 @@ function getNextBoostReset() {
 async function checkBoostStatus() {
   const { data, error } = await supabase
     .from('users')
-    .select('last_daily_claim')
+    .select('last_boost_claim')
     .eq('id', currentUser.id)
     .single();
 
@@ -250,29 +250,34 @@ async function checkBoostStatus() {
     return;
   }
 
-  const lastClaim = data.last_daily_claim ? new Date(data.last_daily_claim) : null;
+  const lastClaim = data.last_boost_claim ? new Date(data.last_boost_claim) : null;
   const now = new Date();
   const nextReset = getNextBoostReset();
 
   const resetWindowStart = new Date(nextReset.getTime() - 12 * 60 * 60 * 1000); // 12 hrs before next
 
   if (!lastClaim || lastClaim < resetWindowStart) {
-    dailyButton.disabled = false;
-    dailyButton.style.opacity = 1;
+    boostButton.disabled = false;
+    boostButton.style.opacity = 1;
     timerText.textContent = '';
   } else {
-    dailyButton.disabled = true;
-    dailyButton.style.opacity = 0.5;
+    boostButton.disabled = true;
+    boostButton.style.opacity = 0.5;
     startCountdown(nextReset - now);
   }
+}
+
+async function claimBoostPack() {
+  const cards = await getRandomCardPack();
+  await giveCardsToUser(cards);
 
   await supabase
-  .from('users')
-  .update({ last_daily_claim: new Date().toISOString() })
-  .eq('id', currentUser.id);
+    .from('users')
+    .update({ last_boost_claim: new Date().toISOString() })
+    .eq('id', currentUser.id);
 
-checkBoostStatus();
-
+  showBoostModal(cards);
+  checkBoostStatus(); // now this makes sense
 }
 
 // Keep outside of claimBoostPack()
@@ -281,10 +286,10 @@ function getCardImageUrl(cardId) {
   return `./cards/${paddedId}.png`;
 }
 
-function showDailyModal(cards) {
-  const modal = document.getElementById('daily-modal');
-  const modalCards = document.getElementById('modal-cards');
-  const modalDate = document.getElementById('modal-date');
+function showBoostModal(cards) {
+  const modal = document.getElementById('boost-modal');
+  const modalCards = document.getElementById('boost-modal-cards');
+  const modalDate = document.getElementById('boost-modal-date');
 
   // Set today's date
   const today = new Date();
@@ -311,8 +316,8 @@ function showDailyModal(cards) {
 }
 
 // Close button listener (only needs to be set once)
-document.getElementById('modal-close').addEventListener('click', () => {
-  document.getElementById('daily-modal').classList.add('hidden');
+document.getElementById('boost-modal-close').addEventListener('click', () => {
+  document.getElementById('boost-modal').classList.add('hidden');
 });
 
 // --------------- CARDS ----------------
@@ -412,14 +417,3 @@ async function giveCardsToUser(cards) {
     }
   }
 }
-
-// Safe session restore
-supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session?.user) {
-    currentUser = session.user;
-    createUserIfNotExists(currentUser);
-    showGame(currentUser);
-  } else {
-    showLogin();
-  }
-});
