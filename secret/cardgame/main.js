@@ -291,24 +291,17 @@ function showBoostModal(cards) {
   const modalCards = document.getElementById('modal-cards');
   const modalDate = document.getElementById('boost-modal-date');
 
+  // Exit early if any modal element is missing
   if (!modal || !modalCards || !modalDate) {
-    console.warn("Boost modal elements not found on this page.");
+    console.warn("Boost modal elements not found. Skipping modal display.");
     return;
   }
 
-  // Set today's date
-  const today = new Date();
-  modalDate.textContent = today.toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
+  modalDate.textContent = new Date().toLocaleDateString(undefined, {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
 
-  // Clear previous content
   modalCards.innerHTML = '';
-
-  // Add card images
   for (const card of cards) {
     const img = document.createElement('img');
     img.src = getCardImageUrl(card.id);
@@ -320,9 +313,13 @@ function showBoostModal(cards) {
 }
 
 // Close button listener (only needs to be set once)
-document.getElementById('boost-modal-close').addEventListener('click', () => {
-  document.getElementById('boost-modal').classList.add('hidden');
-});
+const closeModalButton = document.getElementById('boost-modal-close');
+const boostModal = document.getElementById('boost-modal');
+if (closeModalButton && boostModal) {
+  closeModalButton.addEventListener('click', () => {
+    boostModal.classList.add('boost-modal-hidden');
+  });
+}
 
 // --------------- CARDS ----------------
 
