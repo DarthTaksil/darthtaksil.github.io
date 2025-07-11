@@ -46,10 +46,10 @@ I'm relearning 70 star and need to keep my route notes somewhere.  This is my we
 ### Cool Cool Mtn.
 - Wall Kicks Will Work
 - Li'l Penguin Lost
-- 100 Coin Star + Red Coin Star
+- 100 Coin Star + Slip Slidin' Away
 - - Enter slide with 24
 - - Last turn with 83
-- Slip Slidin' Away
+- Big Penguin Race
 
 ---
 
