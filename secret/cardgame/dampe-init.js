@@ -61,23 +61,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         const resultImg = new Image();
         const roll = Math.random();
 
-        if (roll < 0.10) {
+        if (roll < 0.09) {
           const card = await giveRandomCardToUser(currentUser.id);
           showCardModal(card);
           addCardToSidebar(card);
           resultText = "You found a card!";
-        } else if (roll < 0.50) {
-          resultText = "Green Rupee";
-          resultImg.src = "/images/grnrup.png";
-          await rewardCoins(1);
-        } else if (roll < 0.80) {
+        } else if (roll < 0.18) {
+          resultText = "Purple Rupee";
+          resultImg.src = "/images/purprup.png";
+          await rewardCoins(50);
+        } else if (roll < 0.32) {
+          resultText = "Red Rupee";
+          resultImg.src = "/images/redrup.png";
+          await rewardCoins(20);
+        } else if (roll < 0.55) {
           resultText = "Blue Rupee";
           resultImg.src = "/images/blurup.png";
           await rewardCoins(5);
         } else {
-          resultText = "Red Rupee";
-          resultImg.src = "/images/redrup.png";
-          await rewardCoins(20);
+          resultText = "Green Rupee";
+          resultImg.src = "/images/grnrup.png";
+          await rewardCoins(1);
         }
 
         const resultDiv = document.getElementById('dig-result');
