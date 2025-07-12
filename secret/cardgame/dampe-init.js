@@ -311,8 +311,9 @@ async function showCardCarousel(card) {
   const overlay = document.getElementById('modal-overlay');
   const modal = document.getElementById('daily-modal');
   const carousel = document.getElementById('card-carousel');
+  const carDuration = 3000; // spin duration in milliseconds
   const finalCardId = card.id;
-  const cardCount = 30;
+  const cardCount = 50;
 
   // Clear previous
   carousel.innerHTML = '';
@@ -375,9 +376,6 @@ async function showCardCarousel(card) {
 
       // Lock final card in place
       inner.style.left = `-${totalDistance}px`;
-
-      // Add to sidebar
-      addCardToSidebar(card);
 
       // Fade in close button
       const closeBtn = document.getElementById('modal-close');
