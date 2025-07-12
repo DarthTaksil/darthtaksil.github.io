@@ -314,8 +314,8 @@ async function showCardCarousel(card) {
   const overlay = document.getElementById('modal-overlay');
   const modal = document.getElementById('daily-modal');
   const carousel = document.getElementById('card-carousel');
-  const cardCount = 30; // how many random cards to show while spinning
   const finalCardId = card.id;
+  const cardCount = 30;
 
   // Clear previous
   carousel.innerHTML = '';
@@ -323,46 +323,74 @@ async function showCardCarousel(card) {
   // Create inner container
   const inner = document.createElement('div');
   inner.className = 'carousel-inner';
+  inner.style.display = 'flex';          // horizontal layout
+  inner.style.position = 'absolute';
+  inner.style.left = '0';                // reset position
+  inner.style.transition = 'none';       // prevent default transition
   carousel.appendChild(inner);
 
-  // Build fake spin list
+  // Build spin list
   const spinCards = [];
   for (let i = 0; i < cardCount; i++) {
     const randomId = Math.floor(Math.random() * 180) + 1;
     spinCards.push(randomId);
   }
+  spinCards.push(finalCardId); // put final card at end
 
-  // Add final card to end
-  spinCards.push(finalCardId);
-
-  // Add images to inner
+  // Add images to carousel
   spinCards.forEach(id => {
     const img = document.createElement('img');
     img.src = `./cards/${String(id).padStart(3, '0')}.png`;
     img.alt = '';
+    img.style.width = '120px';
+    img.style.height = '180px';
     inner.appendChild(img);
   });
 
-  // Append to modal and show
+  // Show modal
   document.getElementById('modal-date').textContent = 'You dug up a card!';
   overlay.classList.remove('hidden');
 
-  // Animate spin (simulate scroll down)
-  let currentIndex = 0;
+  // Animate using requestAnimationFrame
   const totalSteps = spinCards.length - 1;
-  let interval = 50;
+  const totalDistance = totalSteps * 120; // 120px per card width
+  const duration = 2000; // in ms
+  const startTime = performance.now();
 
-  const spin = setInterval(() => {
-    if (currentIndex < totalSteps) {
-      inner.style.top = `-${currentIndex * 180}px`; // each card = 180px tall
-      currentIndex++;
-      interval += 10; // slow down
+  function easeOutQuad(t) {
+    return t * (2 - t);
+  }
+
+  function animateSpin(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutQuad(progress);
+    const position = -eased * totalDistance;
+
+    inner.style.left = `${position}px`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateSpin);
     } else {
-      clearInterval(spin);
-      // Final positioning
-      inner.style.top = `-${totalSteps * 180}px`;
-      sfxGetItem.play();
+      // Lock final card in place
+      inner.style.left = `-${totalDistance}px`;
+
+      // Add to sidebar
       addCardToSidebar(card);
+
+      // Fade in close button
+      const closeBtn = document.getElementById('modal-close');
+      closeBtn.classList.add('show');
+
+      document.getElementById('modal-close').addEventListener('click', () => {
+        document.getElementById('modal-close').classList.remove('show');
+      });
+
+      // Play item sound
+      const spinSound = new Audio('/audio/getItem.wav');
+      spinSound.play();
     }
-  }, interval);
+  }
+
+  requestAnimationFrame(animateSpin);
 }
