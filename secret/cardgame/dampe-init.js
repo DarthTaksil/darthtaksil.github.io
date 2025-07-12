@@ -356,8 +356,13 @@ async function showCardCarousel(card) {
   overlay.classList.remove('hidden');
 
   // Animate using requestAnimationFrame
+  const cardWidth = 120;
+  const cardSpacing = 2;
+  const visibleOffset = 3; // number of cards *after* final card to center it
   const totalSteps = spinCards.length - 1;
-  const totalDistance = (totalSteps - 3) * 120; // subtract 3 to center final card
+
+  const totalDistance = (totalSteps - visibleOffset) * (cardWidth + cardSpacing); // center final card
+
   const duration = 4500; // in ms
   const startTime = performance.now();
 
