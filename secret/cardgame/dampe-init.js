@@ -198,7 +198,7 @@ function showUserInfo(user) {
 function addCardToSidebar(card) {
   const list = document.getElementById('dampe-card-list');
   const item = document.createElement('li');
-  newSidebarItem.classList.add('flash-card');
+  item.classList.add('flash-card');
 
   const img = document.createElement('img');
   img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
@@ -208,8 +208,10 @@ function addCardToSidebar(card) {
   label.textContent = card.name;
 
   item.appendChild(img);
-//  item.appendChild(label); //
+  // item.appendChild(label); // Optional
   list.appendChild(item);
+
+  return item; // return the new element
 }
 
 
@@ -367,6 +369,10 @@ async function showCardCarousel(card) {
     if (progress < 1) {
       requestAnimationFrame(animateSpin);
     } else {
+
+      const sidebarItem = addCardToSidebar(card); // store the returned element
+      sidebarItem.scrollIntoView({ behavior: "smooth" });
+
       // Lock final card in place
       inner.style.left = `-${totalDistance}px`;
 
@@ -381,9 +387,7 @@ async function showCardCarousel(card) {
         document.getElementById('modal-close').classList.remove('show');
       });
 
-      // Play item sound
-      const spinSound = new Audio('/audio/getItem.wav');
-      spinSound.play();
+      sfxGetItem.play(); // play get item sfx
     }
   }
 
