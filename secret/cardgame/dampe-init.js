@@ -49,6 +49,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const digBanner = document.getElementById("dig-banner");
     if (digBanner) {
       digBanner.classList.add("fade-out");
+      setTimeout(() => {
+        digBanner.remove();
+      }, 1000); // match CSS transition duration
     }
 
     const cost = 10; // Cost for Digging
