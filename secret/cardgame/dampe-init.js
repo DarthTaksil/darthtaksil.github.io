@@ -93,8 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (roll < 0.09) {
           const card = await giveRandomCardToUser(currentUser.id);
-          showCardModal(card);
-          addCardToSidebar(card);
+          showCardCarousel(card);
           resultText = "You found a card!";
         } else if (roll < 0.13) {
           resultText = "Purple Rupee";
@@ -187,6 +186,8 @@ function showUserInfo(user) {
 function addCardToSidebar(card) {
   const list = document.getElementById('dampe-card-list');
   const item = document.createElement('li');
+  const newSidebarItem = addCardToSidebar(card);
+  newSidebarItem.classList.add('flash-card');
 
   const img = document.createElement('img');
   img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
@@ -270,4 +271,64 @@ async function loadWalletBalance(userId) {
 
   const walletSpan = document.getElementById('rupeeAmount');
   walletSpan.textContent = data.wallet ?? 0;
+}
+
+
+
+// ----------- CARD CAROUSEL ----------
+
+async function showCardCarousel(card) {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('daily-modal');
+  const carousel = document.getElementById('card-carousel');
+  const cardCount = 30; // how many random cards to show while spinning
+  const finalCardId = card.id;
+
+  // Clear previous
+  carousel.innerHTML = '';
+
+  // Create inner container
+  const inner = document.createElement('div');
+  inner.className = 'carousel-inner';
+  carousel.appendChild(inner);
+
+  // Build fake spin list
+  const spinCards = [];
+  for (let i = 0; i < cardCount; i++) {
+    const randomId = Math.floor(Math.random() * 180) + 1;
+    spinCards.push(randomId);
+  }
+
+  // Add final card to end
+  spinCards.push(finalCardId);
+
+  // Add images to inner
+  spinCards.forEach(id => {
+    const img = document.createElement('img');
+    img.src = `./cards/${String(id).padStart(3, '0')}.png`;
+    img.alt = '';
+    inner.appendChild(img);
+  });
+
+  // Append to modal and show
+  document.getElementById('modal-date').textContent = 'You dug up a card!';
+  overlay.classList.remove('hidden');
+
+  // Animate spin (simulate scroll down)
+  let currentIndex = 0;
+  const totalSteps = spinCards.length - 1;
+  let interval = 50;
+
+  const spin = setInterval(() => {
+    if (currentIndex < totalSteps) {
+      inner.style.top = `-${currentIndex * 180}px`; // each card = 180px tall
+      currentIndex++;
+      interval += 10; // slow down
+    } else {
+      clearInterval(spin);
+      // Final positioning
+      inner.style.top = `-${totalSteps * 180}px`;
+      addCardToSidebar(card);
+    }
+  }, interval);
 }

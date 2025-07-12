@@ -268,6 +268,7 @@ async function checkBoostStatus() {
 async function claimBoostPack() {
   const cards = await getRandomCardPack();
   await giveCardsToUser(cards);
+  boostButton.disabled = false;
 
   // Fetches current wallet balance
   const { data: userData, error } = await supabase
@@ -278,6 +279,7 @@ async function claimBoostPack() {
 
   if (error) {
     console.error("Failed to fetch user wallet:", error);
+    boostButton.disabled = true;
     return;
   }
 
@@ -296,7 +298,7 @@ async function claimBoostPack() {
   await renderCardGrid();
   await checkBoostStatus();
 
-  // Optionally update wallet display
+  // Update wallet display
   const walletSpan = document.getElementById('wallet-balance');
   if (walletSpan) walletSpan.textContent = newWallet;
 }
