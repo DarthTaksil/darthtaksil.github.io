@@ -374,9 +374,8 @@ async function showCardCarousel(card) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const eased = easeOutQuad(progress);
-    const position = -eased * totalDistance;
-
-    inner.style.left = `${position}px`;
+    const position = `calc(50% - ${cardWidth / 2}px - ${eased * totalDistance}px)`;
+    inner.style.left = position;
 
     if (progress < 1) {
       requestAnimationFrame(animateSpin);
@@ -386,7 +385,7 @@ async function showCardCarousel(card) {
       sidebarItem.scrollIntoView({ behavior: "smooth" });
 
       // Lock final card in place
-      inner.style.left = `-${totalDistance}px`;
+      inner.style.left = `calc(50% - ${cardWidth / 2}px - ${totalDistance}px)`;
 
       // Fade in close button
       const closeBtn = document.getElementById('modal-close');
