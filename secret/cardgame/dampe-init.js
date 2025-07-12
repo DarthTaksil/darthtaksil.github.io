@@ -250,8 +250,20 @@ async function rewardCoins(amount) {
 
 function animateRupeeCount() {
   const updateRate = 1 / 60; // ~60 FPS
-  const duration = 2.0; // target duration in seconds
+  const duration = 1.7; // target duration in seconds
   const speed = Math.abs(Rupees - displayedRupees) / (duration / updateRate);
+
+  const isAnimating = displayedRupees !== Rupees;
+
+  if (isAnimating && sfxRupeeChange.paused) {
+    sfxRupeeChange.play(); // Start loop
+  }
+
+  if (!isAnimating && !sfxRupeeChange.paused) {
+    sfxRupeeChange.pause();
+    sfxRupeeChange.currentTime = 0;
+    sfxRupeeChangeDone.play(); // Done sound
+  }
 
   if (displayedRupees !== Rupees) {
     const diff = Rupees - displayedRupees;
