@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       setTimeout(() => {
           resultDiv.innerHTML = "";
           resultDiv.classList.remove('fade-out', 'hide');
-      }, 4100);
+      }, 2000);
     }
 
   });
