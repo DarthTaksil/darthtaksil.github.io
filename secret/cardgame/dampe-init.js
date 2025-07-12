@@ -311,7 +311,6 @@ async function showCardCarousel(card) {
   const overlay = document.getElementById('modal-overlay');
   const modal = document.getElementById('daily-modal');
   const carousel = document.getElementById('card-carousel');
-  const carDuration = 3000; // spin duration in milliseconds
   const finalCardId = card.id;
   const cardCount = 50;
 
@@ -352,7 +351,7 @@ async function showCardCarousel(card) {
   // Animate using requestAnimationFrame
   const totalSteps = spinCards.length - 1;
   const totalDistance = totalSteps * 120; // 120px per card width
-  const duration = 2000; // in ms
+  const duration = 4500; // in ms
   const startTime = performance.now();
 
   function easeOutQuad(t) {
