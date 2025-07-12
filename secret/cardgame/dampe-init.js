@@ -371,7 +371,7 @@ async function showCardCarousel(card) {
     const eased = easeOutQuad(progress);
     const position = -eased * totalDistance;
 
-    inner.style.left = `-${totalDistance}px`;
+    inner.style.left = `${position}px`;
 
     if (progress < 1) {
       requestAnimationFrame(animateSpin);
