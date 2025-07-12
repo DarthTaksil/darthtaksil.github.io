@@ -198,7 +198,6 @@ function showUserInfo(user) {
 function addCardToSidebar(card) {
   const list = document.getElementById('dampe-card-list');
   const item = document.createElement('li');
-  const newSidebarItem = addCardToSidebar(card);
   newSidebarItem.classList.add('flash-card');
 
   const img = document.createElement('img');
