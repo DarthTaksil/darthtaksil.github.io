@@ -249,23 +249,16 @@ async function rewardCoins(amount) {
 
 
 function animateRupeeCount() {
-  const isAnimating = displayedRupees !== Rupees;
+  const updateRate = 1 / 60; // ~60 FPS
+  const duration = 2.0; // target duration in seconds
+  const speed = Math.abs(Rupees - displayedRupees) / (duration / updateRate);
 
-  if (isAnimating && sfxRupeeChange.paused) {
-    sfxRupeeChange.play(); // Start loop
-  }
+  if (displayedRupees !== Rupees) {
+    const diff = Rupees - displayedRupees;
+    const direction = Math.sign(diff);
+    const step = Math.min(speed, Math.abs(diff));
 
-  if (!isAnimating && !sfxRupeeChange.paused) {
-    sfxRupeeChange.pause();
-    sfxRupeeChange.currentTime = 0;
-    sfxRupeeChangeDone.play(); // Done sound
-  }
-
-  if (isAnimating) {
-    displayedRupees += (Rupees - displayedRupees) * 0.1;
-    if (Math.abs(Rupees - displayedRupees) < 0.5) {
-      displayedRupees = Rupees;
-    }
+    displayedRupees += direction * step;
 
     const rounded = Math.round(displayedRupees);
     document.getElementById("rupeeAmount").textContent = rounded;
