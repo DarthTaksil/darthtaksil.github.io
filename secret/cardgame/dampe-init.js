@@ -328,11 +328,18 @@ async function showCardCarousel(card) {
 
   // Build spin list
   const spinCards = [];
-  for (let i = 0; i < cardCount; i++) {
-    const randomId = Math.floor(Math.random() * 180) + 1;
-    spinCards.push(randomId);
-  }
-  spinCards.push(finalCardId); // put final card at end
+    for (let i = 0; i < cardCount; i++) {
+      const randomId = Math.floor(Math.random() * 180) + 1;
+      spinCards.push(randomId);
+    }
+
+  spinCards.push(finalCardId);
+
+    // Add 3 padding cards after the result to center it
+    for (let i = 0; i < 3; i++) {
+      const randomId = Math.floor(Math.random() * 180) + 1;
+      spinCards.push(randomId);
+    }
 
   // Add images to carousel
   spinCards.forEach(id => {
@@ -350,7 +357,7 @@ async function showCardCarousel(card) {
 
   // Animate using requestAnimationFrame
   const totalSteps = spinCards.length - 1;
-  const totalDistance = totalSteps * 120; // 120px per card width
+  const totalDistance = (totalSteps - 3) * 120; // subtract 3 to center final card
   const duration = 4500; // in ms
   const startTime = performance.now();
 
@@ -364,7 +371,7 @@ async function showCardCarousel(card) {
     const eased = easeOutQuad(progress);
     const position = -eased * totalDistance;
 
-    inner.style.left = `${position}px`;
+    inner.style.left = `-${totalDistance}px`;
 
     if (progress < 1) {
       requestAnimationFrame(animateSpin);
