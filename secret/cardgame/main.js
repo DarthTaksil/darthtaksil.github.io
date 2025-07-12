@@ -1,4 +1,4 @@
-import { supabase } from './supabaseConfig.js';
+import { supabase } from './shared/supabaseConfig.js';
 
 window.supabaseClient = supabase;
 

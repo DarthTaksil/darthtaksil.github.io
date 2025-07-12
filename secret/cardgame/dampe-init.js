@@ -1,6 +1,6 @@
 import { getCurrentUser } from './shared/auth.js';
 import { giveRandomCardToUser } from './shared/cards.js';
-import { supabase } from './supabaseConfig.js';
+import { supabase } from './shared/supabaseConfig.js';
 
 window.supabaseClient = supabase;
 
