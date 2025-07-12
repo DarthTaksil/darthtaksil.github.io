@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   showUserInfo(currentUser);
+  await loadWalletBalance(currentUser.id);
 
   const cooldownDuration = 3000; // cooldown in milliseconds
   let isCooldown = false;
@@ -196,4 +197,20 @@ async function rewardCoins(amount) {
     const walletSpan = document.getElementById('wallet-balance');
     walletSpan.textContent = newWallet;
   }
+}
+
+async function loadWalletBalance(userId) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('wallet')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    console.error('Failed to load wallet balance:', error);
+    return;
+  }
+
+  const walletSpan = document.getElementById('wallet-balance');
+  walletSpan.textContent = data.wallet ?? 0;
 }
