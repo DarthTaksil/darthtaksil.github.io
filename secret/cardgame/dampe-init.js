@@ -11,10 +11,10 @@ let previousRupees = 0;
 let currentUser = null;
 let isCooldown = false;
 
-const sfxGetItem = new Audio('./audio/getItem.wav');
-const sfxGetRupee = new Audio('./audio/getRupee.wav');
-const sfxRupeeChange = new Audio('./audio/getRupeeChange.wav');
-const sfxRupeeChangeDone = new Audio('./audio/getRupeeChangeDone.wav');
+const sfxGetItem = new Audio('./audio/getItem.ogg');
+const sfxGetRupee = new Audio('./audio/getRupee.ogg');
+const sfxRupeeChange = new Audio('./audio/getRupeeChange.ogg');
+const sfxRupeeChangeDone = new Audio('./audio/getRupeeChangeDone.ogg');
 sfxRupeeChange.loop = true;  // used while wallet is changing amounts
 
 document.addEventListener("DOMContentLoaded", async () => {
