@@ -11,10 +11,10 @@ let previousRupees = 0;
 let currentUser = null;
 let isCooldown = false;
 
-const sfxGetItem = new Audio('/audio/getItem.wav');
-const sfxGetRupee = new Audio('/audio/getRupee.wav');
-const sfxRupeeChange = new Audio('/audio/getRupeeChange.wav');
-const sfxRupeeChangeDone = new Audio('/audio/getRupeeChangeDone.wav');
+const sfxGetItem = new Audio('./audio/getItem.wav');
+const sfxGetRupee = new Audio('./audio/getRupee.wav');
+const sfxRupeeChange = new Audio('./audio/getRupeeChange.wav');
+const sfxRupeeChangeDone = new Audio('./audio/getRupeeChangeDone.wav');
 sfxRupeeChange.loop = true;  // used while wallet is changing amounts
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const cooldownDuration = 3000; // cooldown in milliseconds
   let isCooldown = false;
+
+
 
   // --------------------------  DIG  --------------------
 
@@ -164,6 +166,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+
+
 // show card obtained
 function showCardModal(card) {
   const overlay = document.getElementById('modal-overlay');
@@ -185,6 +189,8 @@ function showCardModal(card) {
 document.getElementById('modal-close').addEventListener('click', () => {
   document.getElementById('modal-overlay').classList.add('hidden');
 });
+
+
 
 // After user is verified
 function showUserInfo(user) {
@@ -210,6 +216,8 @@ function addCardToSidebar(card) {
 //  item.appendChild(label); //
   list.appendChild(item);
 }
+
+
 
 async function rewardCoins(amount) {
   const { data: userData, error } = await supabase
@@ -238,6 +246,8 @@ async function rewardCoins(amount) {
   }
 }
 
+
+
 function animateRupeeCount() {
   const isAnimating = displayedRupees !== Rupees;
 
@@ -248,7 +258,7 @@ function animateRupeeCount() {
   if (!isAnimating && !sfxRupeeChange.paused) {
     sfxRupeeChange.pause();
     sfxRupeeChange.currentTime = 0;
-    sfxRupeeChangeDone.play(); // 🎵 Done sound
+    sfxRupeeChangeDone.play(); // Done sound
   }
 
   if (isAnimating) {
@@ -277,6 +287,8 @@ function animateRupeeCount() {
 
   requestAnimationFrame(animateRupeeCount);
 }
+
+
 
 async function loadWalletBalance(userId) {
   const { data, error } = await supabase
