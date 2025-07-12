@@ -273,8 +273,14 @@ async function claimBoostPack() {
 
   await supabase
     .from('users')
-    .update({ last_boost_claim: new Date().toISOString() })
+    .update({
+      last_boost_claim: new Date().toISOString(),
+      wallet: (userData.wallet ?? 0) + 99
+    })
     .eq('id', currentUser.id);
+
+    const walletSpan = document.getElementById('wallet-balance');
+    walletSpan.textContent = userData.wallet ?? 0;
 
   showBoostModal(cards);
   checkBoostStatus();

@@ -11,15 +11,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-   showUserInfo(currentUser);
+  showUserInfo(currentUser);
 
-    const cooldownDuration = 5000; // 5 seconds
-    let isCooldown = false;
+  const cooldownDuration = 3000; // cooldown in milliseconds
+  let isCooldown = false;
 
-    document.getElementById("digBtn").addEventListener("click", async () => {
+  // --------------------------  DIG  --------------------
+
+  document.getElementById("digBtn").addEventListener("click", async () => {
 
     if (isCooldown) return;
     isCooldown = true;
+
+    const cost = 10; // Cost for Digging
+
+    const { data: userData, error } = await supabase
+      .from('users')
+      .select('wallet')
+      .eq('id', currentUser.id)
+      .single();
+    
+    if ((userData.wallet ?? 0) < cost) {
+      alert("You need more Clint Coin to dig!");
+      return;
+    }
+
+    await supabase
+      .from('users')
+      .update({ wallet: userData.wallet - cost })
+      .eq('id', currentUser.id);
 
     const digBtn = document.getElementById("digBtn");
     const fill = digBtn.querySelector(".dig-fill");
@@ -29,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     fill.style.transition = "none";
     fill.style.width = "0%";
     requestAnimationFrame(() => {
-        fill.style.transition = `width ${cooldownDuration}ms linear`;
+        fill.style.transition = `width ${cooldownDuration}ms ease-in`;
         fill.style.width = "100%";
     });
 
@@ -38,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const resultImg = new Image();
         const roll = Math.random();
 
-        if (roll < 0.06) {
+        if (roll < 0.10) {
         const card = await giveRandomCardToUser(currentUser.id);
         showCardModal(card);
         addCardToSidebar(card);
@@ -66,32 +86,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         textEl.textContent = resultText;
         resultDiv.appendChild(textEl);
     } finally {
-        setTimeout(() => {
-            fill.style.transition = "none";
-            fill.style.width = "0%";
-            digBtn.disabled = false;
-            isCooldown = false;
 
-            // Flash the Dig button
-            digBtn.classList.add('flash');
-            setTimeout(() => digBtn.classList.remove('flash'), 600);
-        }, cooldownDuration);
+      const walletSpan = document.getElementById('wallet-balance');
+      walletSpan.textContent = userData.wallet ?? 0;
 
-        // Start fade-out on result
-        const resultDiv = document.getElementById('dig-result');
-        resultDiv.classList.add('fade-out');
-        setTimeout(() => {
-            resultDiv.classList.add('hide');
-        }, 100); // Slight delay so transition applies
+      setTimeout(() => {
+          fill.style.transition = "none";
+          fill.style.width = "0%";
+          digBtn.disabled = false;
+          isCooldown = false;
 
-        // Reset result after fade
-        setTimeout(() => {
-            resultDiv.innerHTML = "";
-            resultDiv.classList.remove('fade-out', 'hide');
-        }, 4100);
-        }
+          // Flash the Dig button
+          digBtn.classList.add('flash');
+          setTimeout(() => digBtn.classList.remove('flash'), 600);
+      }, cooldownDuration);
 
-    });
+      // Start fade-out on result
+      const resultDiv = document.getElementById('dig-result');
+      resultDiv.classList.add('fade-out');
+      setTimeout(() => {
+          resultDiv.classList.add('hide');
+      }, 100); // Slight delay so transition applies
+
+      // Reset result after fade
+      setTimeout(() => {
+          resultDiv.innerHTML = "";
+          resultDiv.classList.remove('fade-out', 'hide');
+      }, 4100);
+    }
+
+  });
 });
 
 // show card obtained
