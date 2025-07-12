@@ -62,19 +62,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const roll = Math.random();
 
         if (roll < 0.10) {
-        const card = await giveRandomCardToUser(currentUser.id);
-        showCardModal(card);
-        addCardToSidebar(card);
-        resultText = "You found a card!";
+          const card = await giveRandomCardToUser(currentUser.id);
+          showCardModal(card);
+          addCardToSidebar(card);
+          resultText = "You found a card!";
         } else if (roll < 0.50) {
-        resultText = "Green Rupee";
-        resultImg.src = "/images/grnrup.png";
+          resultText = "Green Rupee";
+          resultImg.src = "/images/grnrup.png";
+          await rewardCoins(1);
         } else if (roll < 0.80) {
-        resultText = "Blue Rupee";
-        resultImg.src = "/images/blurup.png";
+          resultText = "Blue Rupee";
+          resultImg.src = "/images/blurup.png";
+          await rewardCoins(5);
         } else {
-        resultText = "Red Rupee";
-        resultImg.src = "/images/redrup.png";
+          resultText = "Red Rupee";
+          resultImg.src = "/images/redrup.png";
+          await rewardCoins(20);
         }
 
         const resultDiv = document.getElementById('dig-result');
@@ -89,9 +92,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         textEl.textContent = resultText;
         resultDiv.appendChild(textEl);
     } finally {
-
-      const walletSpan = document.getElementById('wallet-balance');
-      walletSpan.textContent = userData.wallet ?? 0;
 
       setTimeout(() => {
           fill.style.transition = "none";
@@ -164,4 +164,32 @@ function addCardToSidebar(card) {
   item.appendChild(img);
 //  item.appendChild(label); //
   list.appendChild(item);
+}
+
+async function rewardCoins(amount) {
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('wallet')
+    .eq('id', currentUser.id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching wallet:', error);
+    return;
+  }
+
+  const newWallet = (userData.wallet ?? 0) + amount;
+
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ wallet: newWallet })
+    .eq('id', currentUser.id);
+
+  if (updateError) {
+    console.error('Error updating wallet:', updateError);
+  } else {
+    console.log(`+${amount} Clint Coin awarded!`);
+    const walletSpan = document.getElementById('wallet-balance');
+    walletSpan.textContent = newWallet;
+  }
 }
