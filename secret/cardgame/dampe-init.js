@@ -260,6 +260,6 @@ async function loadWalletBalance(userId) {
     return;
   }
 
-  const walletSpan = document.getElementById('wallet-balance');
+  const walletSpan = document.getElementById('rupeeAmount');
   walletSpan.textContent = data.wallet ?? 0;
 }
