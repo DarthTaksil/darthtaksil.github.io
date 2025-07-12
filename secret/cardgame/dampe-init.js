@@ -96,15 +96,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           showCardModal(card);
           addCardToSidebar(card);
           resultText = "You found a card!";
-        } else if (roll < 0.18) {
+        } else if (roll < 0.13) {
           resultText = "Purple Rupee";
           resultImg.src = "/images/purprup.png";
           await rewardCoins(50);
-        } else if (roll < 0.32) {
+        } else if (roll < 0.30) {
           resultText = "Red Rupee";
           resultImg.src = "/images/redrup.png";
           await rewardCoins(20);
-        } else if (roll < 0.55) {
+        } else if (roll < 0.52) {
           resultText = "Blue Rupee";
           resultImg.src = "/images/blurup.png";
           await rewardCoins(5);
