@@ -46,6 +46,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (isCooldown) return;
     isCooldown = true;
 
+    const digBanner = document.getElementById("dig-banner");
+    if (digBanner) {
+      digBanner.classList.add("fade-out");
+    }
+
     const cost = 10; // Cost for Digging
 
     const { data: userData, error } = await supabase
