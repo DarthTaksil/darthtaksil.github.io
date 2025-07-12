@@ -4,6 +4,10 @@ import { supabase } from './shared/supabaseConfig.js';
 
 window.supabaseClient = supabase;
 
+let Rupees = 0;
+let displayedRupees = 0;
+let previousRupees = 0;
+
 let currentUser = null;
 let isCooldown = false;
 
@@ -16,6 +20,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   showUserInfo(currentUser);
   await loadWalletBalance(currentUser.id);
+
+  // Fetch wallet and start animation
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('wallet')
+    .eq('id', currentUser.id)
+    .single();
+
+  if (!error && userData) {
+    Rupees = userData.wallet ?? 0;
+    displayedRupees = Rupees;
+    previousRupees = Rupees;
+    document.getElementById("rupeeAmount").textContent = Rupees;
+  }
+  animateRupeeCount();
 
   const cooldownDuration = 3000; // cooldown in milliseconds
   let isCooldown = false;
@@ -44,6 +63,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       .from('users')
       .update({ wallet: userData.wallet - cost })
       .eq('id', currentUser.id);
+
+      Rupees = userData.wallet - cost;
 
     const digBtn = document.getElementById("digBtn");
     const fill = digBtn.querySelector(".dig-fill");
@@ -194,9 +215,37 @@ async function rewardCoins(amount) {
     console.error('Error updating wallet:', updateError);
   } else {
     console.log(`+${amount} Clint Coin awarded!`);
-    const walletSpan = document.getElementById('wallet-balance');
-    walletSpan.textContent = newWallet;
+    Rupees = newWallet; // Update target amount
   }
+}
+
+function animateRupeeCount() {
+  if (displayedRupees !== Rupees) {
+    displayedRupees += (Rupees - displayedRupees) * 0.1;
+
+    if (Math.abs(Rupees - displayedRupees) < 0.5) {
+      displayedRupees = Rupees;
+    }
+
+    const rounded = Math.round(displayedRupees);
+    document.getElementById("rupeeAmount").textContent = rounded;
+
+    if (rounded !== previousRupees) {
+      const counterEl = document.getElementById("rupeeCounter");
+
+      if (rounded > previousRupees) {
+        counterEl.classList.add("flash-gain");
+        setTimeout(() => counterEl.classList.remove("flash-gain"), 300);
+      } else if (rounded < previousRupees) {
+        counterEl.classList.add("flash-loss");
+        setTimeout(() => counterEl.classList.remove("flash-loss"), 300);
+      }
+
+      previousRupees = rounded;
+    }
+  }
+
+  requestAnimationFrame(animateRupeeCount);
 }
 
 async function loadWalletBalance(userId) {
