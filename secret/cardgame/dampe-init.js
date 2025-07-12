@@ -107,22 +107,18 @@ document.addEventListener("DOMContentLoaded", async () => {
           resultText = "Purple Rupee";
           resultImg.src = "/images/purprup.png";
           await rewardCoins(50);
-          sfxGetRupee.play();
         } else if (roll < 0.30) {
           resultText = "Red Rupee";
           resultImg.src = "/images/redrup.png";
           await rewardCoins(20);
-          sfxGetRupee.play();
         } else if (roll < 0.52) {
           resultText = "Blue Rupee";
           resultImg.src = "/images/blurup.png";
           await rewardCoins(5);
-          sfxGetRupee.play();
         } else {
           resultText = "Green Rupee";
           resultImg.src = "/images/grnrup.png";
           await rewardCoins(1);
-          sfxGetRupee.play();
         }
 
         const resultDiv = document.getElementById('dig-result');
@@ -249,10 +245,6 @@ async function rewardCoins(amount) {
 
 
 function animateRupeeCount() {
-  const updateRate = 1 / 60; // ~60 FPS
-  const duration = 1.7; // target duration in seconds
-  const speed = Math.abs(Rupees - displayedRupees) / (duration / updateRate);
-
   const isAnimating = displayedRupees !== Rupees;
 
   if (isAnimating && sfxRupeeChange.paused) {
@@ -265,12 +257,11 @@ function animateRupeeCount() {
     sfxRupeeChangeDone.play(); // Done sound
   }
 
-  if (displayedRupees !== Rupees) {
-    const diff = Rupees - displayedRupees;
-    const direction = Math.sign(diff);
-    const step = Math.min(speed, Math.abs(diff));
-
-    displayedRupees += direction * step;
+  if (isAnimating) {
+    displayedRupees += (Rupees - displayedRupees) * 0.1;
+    if (Math.abs(Rupees - displayedRupees) < 0.5) {
+      displayedRupees = Rupees;
+    }
 
     const rounded = Math.round(displayedRupees);
     document.getElementById("rupeeAmount").textContent = rounded;
