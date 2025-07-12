@@ -11,6 +11,12 @@ let previousRupees = 0;
 let currentUser = null;
 let isCooldown = false;
 
+const sfxGetItem = new Audio('/audio/getItem.wav');
+const sfxGetRupee = new Audio('/audio/getRupee.wav');
+const sfxRupeeChange = new Audio('/audio/getRupeeChange.wav');
+const sfxRupeeChangeDone = new Audio('/audio/getRupeeChangeDone.wav');
+sfxRupeeChange.loop = true;  // used while wallet is changing amounts
+
 document.addEventListener("DOMContentLoaded", async () => {
   currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -99,18 +105,22 @@ document.addEventListener("DOMContentLoaded", async () => {
           resultText = "Purple Rupee";
           resultImg.src = "/images/purprup.png";
           await rewardCoins(50);
+          sfxGetRupee.play();
         } else if (roll < 0.30) {
           resultText = "Red Rupee";
           resultImg.src = "/images/redrup.png";
           await rewardCoins(20);
+          sfxGetRupee.play();
         } else if (roll < 0.52) {
           resultText = "Blue Rupee";
           resultImg.src = "/images/blurup.png";
           await rewardCoins(5);
+          sfxGetRupee.play();
         } else {
           resultText = "Green Rupee";
           resultImg.src = "/images/grnrup.png";
           await rewardCoins(1);
+          sfxGetRupee.play();
         }
 
         const resultDiv = document.getElementById('dig-result');
@@ -229,9 +239,20 @@ async function rewardCoins(amount) {
 }
 
 function animateRupeeCount() {
-  if (displayedRupees !== Rupees) {
-    displayedRupees += (Rupees - displayedRupees) * 0.1;
+  const isAnimating = displayedRupees !== Rupees;
 
+  if (isAnimating && sfxRupeeChange.paused) {
+    sfxRupeeChange.play(); // Start loop
+  }
+
+  if (!isAnimating && !sfxRupeeChange.paused) {
+    sfxRupeeChange.pause();
+    sfxRupeeChange.currentTime = 0;
+    sfxRupeeChangeDone.play(); // 🎵 Done sound
+  }
+
+  if (isAnimating) {
+    displayedRupees += (Rupees - displayedRupees) * 0.1;
     if (Math.abs(Rupees - displayedRupees) < 0.5) {
       displayedRupees = Rupees;
     }
@@ -328,6 +349,7 @@ async function showCardCarousel(card) {
       clearInterval(spin);
       // Final positioning
       inner.style.top = `-${totalSteps * 180}px`;
+      sfxGetItem.play();
       addCardToSidebar(card);
     }
   }, interval);
