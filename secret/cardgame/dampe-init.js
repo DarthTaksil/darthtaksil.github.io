@@ -1,6 +1,12 @@
 import { getCurrentUser } from './shared/auth.js';
 import { giveRandomCardToUser } from './shared/cards.js';
 
+// Supabase setup
+const SUPABASE_URL = 'https://cbzkrfqhtofxaypsisdg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiemtyZnFodG9meGF5cHNpc2RnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MzAzMjIsImV4cCI6MjA2NzUwNjMyMn0._sNhhbWUih9NUhlENcphukX-74Q7imzMg5w-ZQh0oW4';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = supabase; // helpful for debugging
+
 let currentUser = null;
 let isCooldown = false;
 
