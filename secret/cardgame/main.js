@@ -271,20 +271,36 @@ async function claimBoostPack() {
   const cards = await getRandomCardPack();
   await giveCardsToUser(cards);
 
+  // Fetches current wallet balance
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('wallet')
+    .eq('id', currentUser.id)
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch user wallet:", error);
+    return;
+  }
+
+  const newWallet = (userData.wallet ?? 0) + 99;
+
+  // Updates boost claim time and wallet balance
   await supabase
     .from('users')
     .update({
       last_boost_claim: new Date().toISOString(),
-      wallet: (userData.wallet ?? 0) + 99
+      wallet: newWallet
     })
     .eq('id', currentUser.id);
 
-    const walletSpan = document.getElementById('wallet-balance');
-    walletSpan.textContent = userData.wallet ?? 0;
-
   showBoostModal(cards);
-  checkBoostStatus();
   await renderCardGrid();
+  await checkBoostStatus();
+
+  // Optionally update wallet display
+  const walletSpan = document.getElementById('wallet-balance');
+  if (walletSpan) walletSpan.textContent = newWallet;
 }
 
 // Keep outside of claimBoostPack()
