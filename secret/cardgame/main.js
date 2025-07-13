@@ -139,7 +139,6 @@ function showLogin() {
 window.addEventListener("DOMContentLoaded", async () => {
   currentUser = await getCurrentUser();
   if (!currentUser) {
-    window.location.href = "/secret/cardgame/index.html";
     return;
   }
 
