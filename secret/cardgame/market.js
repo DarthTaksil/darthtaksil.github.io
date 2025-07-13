@@ -50,8 +50,11 @@ async function loadListings() {
         id,
         name
       ),
-      seller:profiles!seller_id (
-        display_name
+      seller:users!seller_id (
+        id,
+        profile:profiles (
+          display_name
+        )
       )
     `)
     .eq("is_sold", false)
@@ -74,7 +77,7 @@ async function loadListings() {
 
   data.forEach((listing) => {
     const card = listing.card;
-    const sellerName = listing.seller?.display_name || "Unknown";
+    const sellerName = listing.seller?.profile?.display_name || "Unknown";
     console.log("Seller Profile:", listing.seller);
 
     const cardEl = document.createElement("div");
