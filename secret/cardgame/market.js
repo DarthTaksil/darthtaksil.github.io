@@ -40,7 +40,7 @@ async function loadWallet() {
 
 
 async function loadListings() {
-  const { data, error } = await supabase
+const { data, error } = await supabase
   .from("market_listings")
   .select(`
     id,
@@ -52,7 +52,7 @@ async function loadListings() {
     ),
     seller:users!seller_id (
       id,
-      profile:profiles (
+      profiles (
         display_name
       )
     )
