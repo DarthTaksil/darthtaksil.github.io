@@ -40,45 +40,54 @@ async function loadWallet() {
 
 
 async function loadListings() {
-  const { data, error } = await supabase
+  // Step 1: Get market listings
+  const { data: listings, error: listingsError } = await supabase
     .from("market_listings")
     .select(`
       id,
       price,
       is_sold,
+      seller_id,
       card:card_id (
         id,
         name
-      ),
-      seller:users!seller_id (
-        id,
-        profile:profiles (
-          display_name
-        )
       )
     `)
     .eq("is_sold", false)
     .neq("seller_id", currentUser.id);
 
-  if (error) {
-    console.error("Failed to fetch listings", error);
+  if (listingsError) {
+    console.error("Failed to fetch listings", listingsError);
     return;
   }
 
-  console.log("Listings returned:", data);
+  // Step 2: Extract unique seller_ids
+  const sellerIds = [...new Set(listings.map(listing => listing.seller_id))];
 
+  // Step 3: Fetch profiles
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, display_name")
+    .in("user_id", sellerIds);
+
+  if (profilesError) {
+    console.error("Failed to fetch profiles", profilesError);
+    return;
+  }
+
+  // Step 4: Create a quick lookup map
+  const sellerMap = {};
+  profiles.forEach(profile => {
+    sellerMap[profile.user_id] = profile.display_name;
+  });
+
+  // Step 5: Render cards
   const container = document.getElementById("market-grid");
-  if (!container) {
-    console.error("Element #market-grid not found.");
-    return;
-  }
-
   container.innerHTML = "";
 
-  data.forEach((listing) => {
+  listings.forEach((listing) => {
     const card = listing.card;
-    const sellerName = listing.seller?.profile?.display_name || "Unknown";
-    console.log("Seller Profile:", listing.seller);
+    const sellerName = sellerMap[listing.seller_id] || "Unknown";
 
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
@@ -279,24 +288,28 @@ const { data, error } = await supabase
             console.error("Failed to delete card:", deleteError);
             alert("Failed to update your inventory.");
           }
-        } else {
+        }else {
           // Otherwise, just update quantity
           const result = await supabase
             .from("user_cards")
             .update({ quantity: newQty })
-            console.log("Attempting to update user_cards", {
-              user_id: currentUser.id,
-              card_id: parseInt(cardId),
-              newQty
-            });
+            .eq("user_id", currentUser.id)
+            .eq("card_id", parseInt(cardId));
 
-            updateError = result.error;
+          console.log("Attempting to update user_cards", {
+            user_id: currentUser.id,
+            card_id: parseInt(cardId),
+            newQty
+          });
+
+          const updateError = result.error;
 
           if (updateError) {
             console.error("Failed to update card quantity:", updateError);
             alert("Failed to update your inventory.");
           }
         }
+
 
         if (updateError) {
           console.error("Failed to reduce card quantity:", updateError);
