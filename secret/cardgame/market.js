@@ -240,7 +240,18 @@ const { data, error } = await supabase
             .from("user_cards")
             .delete()
             .eq("user_id", currentUser.id)
-            .eq("card_id", parseInt(cardId));
+            .eq("card_id", parseInt(cardId))
+            .select();
+
+            console.log("Updated row:", updatedRow);
+
+            if (updateError) {
+              console.error("Failed to update card quantity:", updateError);
+              alert("Failed to update your inventory.");
+            } else if (updatedRow.length === 0) {
+              console.warn("No matching user_cards row found to update.");
+              alert("No matching card found to update.");
+            }
 
           if (deleteError) {
             console.error("Failed to delete card:", deleteError);
@@ -251,8 +262,11 @@ const { data, error } = await supabase
           const result = await supabase
             .from("user_cards")
             .update({ quantity: newQty })
-            .eq("user_id", currentUser.id)
-            .eq("card_id", parseInt(cardId));
+            console.log("Attempting to update user_cards", {
+              user_id: currentUser.id,
+              card_id: parseInt(cardId),
+              newQty
+            });
 
             updateError = result.error;
 
