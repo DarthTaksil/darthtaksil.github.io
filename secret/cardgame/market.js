@@ -217,6 +217,17 @@ const { data, error } = await supabase
         selectedCard.remove();
         selectedCard = null;
 
+        const { error: updateError } = await supabase
+          .from("user_cards")
+          .update({ quantity: supabase.literal("quantity - 1") })
+          .eq("user_id", currentUser.id)
+          .eq("card_id", parseInt(cardId));
+
+        if (updateError) {
+          console.error("Failed to reduce card quantity:", updateError);
+          alert("Failed to update your card inventory.");
+        }
+
         setTimeout(() => {
           loadOwnedCards();
         }, 350);
