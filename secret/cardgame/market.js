@@ -15,6 +15,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("market-username").textContent =
     currentUser.display_name || "Player";
+
+  document.getElementById("buy-modal-close").addEventListener("click", () => {
+    document.getElementById("buy-modal-overlay").classList.add("hidden");
+  });
     
   await loadWallet();
   await loadYourListings();
@@ -158,6 +162,7 @@ async function loadYourListings() {
 
 async function loadListings() {
   // Get market listings
+  const sellerMap = {};
   const { data: listings, error: listingsError } = await supabase
     .from("market_listings")
     .select(`
@@ -192,8 +197,8 @@ async function loadListings() {
     return;
   }
 
-  // Create a quick lookup map
-  const sellerMap = {};
+  // Lookup map
+  sellerMap = {};
   profiles.forEach(profile => {
     sellerMap[profile.user_id] = profile.display_name;
   });
@@ -228,7 +233,7 @@ async function loadListings() {
     container.appendChild(cardEl);
 
     cardEl.addEventListener("click", () => {
-      openBuyModal(listing, card, sellerName);
+      openBuyModal(listing); // This calls the modal opening function
     });
 
   });
@@ -455,35 +460,11 @@ const { data, error } = await supabase
   });
 }
 
-function openBuyModal(listing, card, sellerName) {
-  const overlay = document.getElementById("buy-modal-overlay");
-  const modal = document.getElementById("buy-modal");
-  const details = document.getElementById("buy-card-details");
 
-  details.innerHTML = `
-    <div class="buy-card-info">
-      <img src="./cards/${String(card.id).padStart(3, '0')}.png" alt="${card.name}" />
-      <div class="info-block">
-        <p><strong>Card:</strong> ${card.name}</p>
-        <p><strong>Seller:</strong> ${sellerName}</p>
-        <p><strong>Price:</strong> ${listing.price} 🪙</p>
-        <button id="confirm-buy-btn" class="buy-button">Buy This Card</button>
-      </div>
-    </div>
-  `;
 
-  overlay.classList.remove("hidden");
-  modal.classList.remove("hidden");
 
-  document.getElementById("confirm-buy-btn").addEventListener("click", () =>
-    handleBuy(listing)
-  );
+  // BUYING MECHANIC  
 
-  document.getElementById("buy-modal-close").addEventListener("click", () => {
-    overlay.classList.add("hidden");
-    modal.classList.add("hidden");
-  });
-}
 
 async function handleBuy(listing) {
   // Get buyer wallet
@@ -558,4 +539,87 @@ async function handleBuy(listing) {
   loadWallet();
   loadListings();
   loadYourListings();
+}
+
+async function openBuyModal(listing) {
+  document.getElementById("buy-modal-overlay").classList.remove("hidden");
+
+  document.getElementById("buy-card-img").src = `./cards/${String(listing.card.id).padStart(3, '0')}.png`;
+  document.getElementById("buy-seller-name").textContent = sellerMap[listing.seller_id] || "Unknown";
+  document.getElementById("buy-listed-time").textContent = timeSince(new Date(listing.created_at));
+  document.getElementById("buy-card-price").textContent = `${listing.price} 🪙`;
+
+  const confirmBox = document.getElementById("buy-confirmation");
+  document.getElementById("buy-confirm-btn").onclick = () => confirmBox.classList.remove("hidden");
+  document.getElementById("buy-no-btn").onclick = () => confirmBox.classList.add("hidden");
+  document.getElementById("buy-yes-btn").onclick = () => {
+    confirmBox.classList.add("hidden");
+    handleBuy(listing);
+  };
+
+  await loadSimilarListings(listing.card.id, listing.id);
+}
+
+function timeSince(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  const intervals = [
+    { label: "year", secs: 31536000 },
+    { label: "month", secs: 2592000 },
+    { label: "day", secs: 86400 },
+    { label: "hour", secs: 3600 },
+    { label: "minute", secs: 60 },
+    { label: "second", secs: 1 }
+  ];
+  for (let i of intervals) {
+    const count = Math.floor(seconds / i.secs);
+    if (count >= 1) return `${count} ${i.label}${count > 1 ? 's' : ''} ago`;
+  }
+  return "just now";
+}
+
+async function loadSimilarListings(cardId, excludeListingId) {
+  const { data, error } = await supabase
+    .from("market_listings")
+    .select(`
+      id,
+      price,
+      seller_id,
+      card:card_id (
+        id,
+        name
+      )
+    `)
+    .eq("is_sold", false)
+    .eq("card_id", cardId)
+    .neq("id", excludeListingId)
+    .order("price", { ascending: true });
+
+  const container = document.getElementById("similar-listings");
+  container.innerHTML = "";
+
+  if (error) {
+    console.error("Failed to load similar listings", error);
+    return;
+  }
+
+  data.forEach((listing) => {
+    const cardEl = document.createElement("div");
+    cardEl.className = "similar-card";
+
+    const img = document.createElement("img");
+    img.src = `./cards/${String(listing.card.id).padStart(3, '0')}.png`;
+    img.alt = listing.card.name;
+
+    const priceText = document.createElement("div");
+    priceText.textContent = `${listing.price} 🪙`;
+
+    cardEl.appendChild(img);
+    cardEl.appendChild(priceText);
+
+    cardEl.addEventListener("click", () => {
+      openBuyModal(listing); // Clicking one loads its own modal
+    });
+
+    container.appendChild(cardEl);
+  });
 }
