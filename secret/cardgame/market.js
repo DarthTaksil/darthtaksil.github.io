@@ -36,7 +36,7 @@ async function loadWallet() {
 async function loadListings() {
   const { data, error } = await supabase
     .from("market_listings")
-    .select(`id, price, card:card_id ( id, name ), seller:seller_id ( user_metadata )`)
+    .select(`id, price, card:card_id ( id, name ), seller:seller_id ( id )`)
     .neq("seller_id", currentUser.id);
 
   if (error) {
@@ -49,7 +49,7 @@ async function loadListings() {
 
   data.forEach((listing) => {
     const card = listing.card;
-    const seller = listing.seller?.user_metadata?.full_name || "Seller";
+    const seller = listing.seller?.id || "Seller";
 
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
@@ -66,7 +66,7 @@ async function loadListings() {
 // ----------- SELL CARD MODAL ----------
 function setupSellModal() {
   const modal = document.getElementById("sell-modal");
-  const overlay = document.getElementById("modal-overlay");
+  const overlay = document.getElementById("sell-modal-overlay");
   const closeBtn = document.getElementById("sell-modal-close");
 
   closeBtn.addEventListener("click", () => {
