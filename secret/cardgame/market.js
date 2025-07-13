@@ -44,7 +44,7 @@ async function loadListings() {
     return;
   }
 
-  const container = document.getElementById("market-listings");
+  const container = document.getElementById("market-grid");
   container.innerHTML = "";
 
   data.forEach((listing) => {
