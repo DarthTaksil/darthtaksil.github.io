@@ -68,17 +68,24 @@ async function loadListings() {
 
   container.innerHTML = "";
 
-  data.forEach((listing) => {
-    const card = listing.card;
-    const sellerId = listing.seller?.id ?? "Unknown Seller";
+  data.forEach((entry) => {
+    const card = entry.cards;  // shorthand for easier use
 
     const cardEl = document.createElement("div");
-    cardEl.className = "market-card";
-    cardEl.innerHTML = `
-      <div class="seller">Seller: ${sellerId.slice(0, 8)}...</div>
-      <img src="./cards/${String(card.id).padStart(3, '0')}.png" alt="${card.name}" />
-      <div class="price">${listing.price} Clint Coins</div>
-    `;
+    cardEl.className = "card-item";
+
+    // Use card.id for dataset
+    cardEl.dataset.cardId = card.id;
+
+    const img = document.createElement("img");
+    img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
+    img.alt = card.name;
+
+    cardEl.appendChild(img);
+
+    cardEl.addEventListener("click", () => {
+      // your existing click logic
+    });
 
     container.appendChild(cardEl);
   });
