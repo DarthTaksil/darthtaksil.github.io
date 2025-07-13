@@ -13,7 +13,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  document.getElementById("market-username").textContent = user = await getCurrentUser(user.display_name);
+  document.getElementById("market-username").textContent =
+    currentUser.display_name || "Player";
+    
   await loadWallet();
   await loadListings();
   setupSellModal();

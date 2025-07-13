@@ -142,7 +142,9 @@ async function showGame(user) {
   currentUser = user;
 
   const meta = user.user_metadata || {};
-  userEmail.textContent = meta.full_name || meta.name || meta.preferred_username || meta.user_name || 'Player'; // Sets username
+
+  document.getElementById("display-name").textContent =
+  currentUser.display_name || "Player";
 
   authUI.style.display = 'none';
   gameUI.style.display = 'block';

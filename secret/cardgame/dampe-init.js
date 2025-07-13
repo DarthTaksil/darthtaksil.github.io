@@ -191,8 +191,8 @@ document.getElementById('modal-close').addEventListener('click', () => {
 // After user is verified
 function showUserInfo(user) {
   const meta = user.user_metadata || {};
-  const username = getCurrentUser(user.display_name);
-  document.getElementById('dampe-user-name').textContent = username;
+  document.getElementById("dampe-user-name").textContent =
+    currentUser.display_name || "Player";
 }
 
 function addCardToSidebar(card) {
