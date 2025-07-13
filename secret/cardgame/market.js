@@ -36,7 +36,18 @@ async function loadWallet() {
 async function loadListings() {
   const { data, error } = await supabase
     .from("market_listings")
-    .select(`id, price, card:card_id ( id, name ), seller:seller_id ( id )`)
+    .select(`
+      id,
+      price,
+      card:card_id (
+        id,
+        name
+      ),
+      seller:seller_id (
+        id,
+        user_metadata
+      )
+    `)
     .neq("seller_id", currentUser.id);
 
   if (error) {
@@ -45,11 +56,16 @@ async function loadListings() {
   }
 
   const container = document.getElementById("market-grid");
+  if (!container) {
+    console.error("Element #market-grid not found.");
+    return;
+  }
+
   container.innerHTML = "";
 
   data.forEach((listing) => {
     const card = listing.card;
-    const seller = listing.seller?.id || "Seller";
+    const seller = listing.seller?.user_metadata?.full_name || "Seller";
 
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
@@ -85,9 +101,10 @@ let selectedCard = null;
 
 async function loadOwnedCards() {
   const { data, error } = await supabase
-    .from("cards")
-    .select("id, name")
-    .eq("owner_id", currentUser.id);
+    .from("user_cards")
+    .select("card_id, quantity, cards ( id, name )")
+    .eq("user_id", currentUser.id)
+    .gt("quantity", 0);
 
   const container = document.getElementById("sell-card-list");
   container.innerHTML = "";
