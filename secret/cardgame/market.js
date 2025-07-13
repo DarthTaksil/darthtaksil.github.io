@@ -83,19 +83,65 @@ async function loadYourListings() {
       const confirmed = confirm("Remove this listing?");
       if (!confirmed) return;
 
-      const { error } = await supabase
+      // Step 1: Delete the listing
+      const { error: deleteError } = await supabase
         .from("market_listings")
         .delete()
         .eq("id", listing.id);
 
-      if (error) {
-        console.error("Failed to delete listing:", error);
+      if (deleteError) {
+        console.error("Failed to delete listing:", deleteError);
         alert("Could not remove listing.");
-      } else {
-        loadYourListings(); // Refresh
-        loadListings();     // Refresh global listings
+        return;
       }
+
+      // Step 2: Restore the card to user_cards
+      const { data: existingEntry, error: fetchError } = await supabase
+        .from("user_cards")
+        .select("quantity")
+        .eq("user_id", currentUser.id)
+        .eq("card_id", card.id)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error("Failed to check for existing user_card:", fetchError);
+        alert("Listing removed, but failed to restore card to inventory.");
+        return;
+      }
+
+      if (existingEntry) {
+        // Update quantity +1
+        const { error: updateError } = await supabase
+          .from("user_cards")
+          .update({ quantity: existingEntry.quantity + 1 })
+          .eq("user_id", currentUser.id)
+          .eq("card_id", card.id);
+
+        if (updateError) {
+          console.error("Failed to update quantity:", updateError);
+          alert("Listing removed, but card quantity update failed.");
+        }
+      } else {
+        // No existing row, insert new one
+        const { error: insertError } = await supabase
+          .from("user_cards")
+          .insert({
+            user_id: currentUser.id,
+            card_id: card.id,
+            quantity: 1,
+          });
+
+        if (insertError) {
+          console.error("Failed to reinsert card:", insertError);
+          alert("Listing removed, but reinserting card failed.");
+        }
+      }
+
+      // Refresh both views
+      loadYourListings();
+      loadListings();
     });
+
 
     cardEl.appendChild(img);
     cardEl.appendChild(priceDiv);
