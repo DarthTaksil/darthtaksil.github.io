@@ -236,12 +236,22 @@ const { data, error } = await supabase
 
         // If new quantity is 0, delete the row
         if (newQty <= 0) {
+          console.log("Updating user_cards where", {
+            user_id: currentUser.id,
+            card_id: parseInt(cardId),
+            newQty
+          });
+
+          let updatedRow, updateError;
           const { error: deleteError } = await supabase
             .from("user_cards")
             .delete()
             .eq("user_id", currentUser.id)
             .eq("card_id", parseInt(cardId))
             .select();
+
+            updatedRow = result.data;
+            updateError = result.error;
 
             console.log("Updated row:", updatedRow);
 
