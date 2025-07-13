@@ -50,9 +50,8 @@ async function loadListings() {
       id,
       name
     ),
-    seller:seller_id (
-      id,
-      seller:profiles!seller_id (
+    seller:users!seller_id (
+      profile:profiles (
         display_name
       )
     )
@@ -75,8 +74,9 @@ async function loadListings() {
 
   data.forEach((listing) => {
     const card = listing.card;
-    const seller = listing.seller?.profile?.display_name || "Unknown";
+    const sellerName = listing.seller?.profile?.display_name ?? "Unknown";
 
+    // Create UI
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
 
@@ -84,19 +84,19 @@ async function loadListings() {
     img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
     img.alt = card.name;
 
-    const sellerEl = document.createElement("div");
-    sellerEl.className = "card-seller";
-    sellerEl.textContent = `Seller: ${seller?.display_name || 'Unknown'}`;
+    const sellerDiv = document.createElement("div");
+    sellerDiv.className = "card-seller";
+    sellerDiv.textContent = `Seller: ${sellerName}`;
 
-    const priceEl = document.createElement("div");
-    priceEl.className = "card-price";
-    priceEl.textContent = `${listing.price} 🪙`;
+    const priceDiv = document.createElement("div");
+    priceDiv.className = "card-price";
+    priceDiv.textContent = `${listing.price} 🪙`;
 
     cardEl.appendChild(img);
-    cardEl.appendChild(sellerEl);
-    cardEl.appendChild(priceEl);
+    cardEl.appendChild(sellerDiv);
+    cardEl.appendChild(priceDiv);
 
-    container.appendChild(cardEl);
+    document.getElementById("market-grid").appendChild(cardEl);
   });
 }
 
