@@ -148,23 +148,27 @@ const { data, error } = await supabase
 
     cardEl.appendChild(img);
 
-    cardEl.addEventListener("click", () => {
-      // Deselect previous
-      if (selectedCard && selectedCard !== cardEl) {
-        selectedCard.classList.remove("selected");
-        const oldControls = selectedCard.querySelector(".sell-controls");
-        if (oldControls) oldControls.remove();
-      }
+  cardEl.addEventListener("click", (e) => {
+    if (e.target.closest(".sell-controls")) {
+      return; // Ignore clicks inside sell-controls
+    }
 
-      // Toggle
-      const isSelected = selectedCard === cardEl;
-      if (isSelected) {
-        selectedCard.classList.remove("selected");
-        const controls = selectedCard.querySelector(".sell-controls");
-        if (controls) controls.remove();
-        selectedCard = null;
-        return;
-      }
+    // Deselect previous
+    if (selectedCard && selectedCard !== cardEl) {
+      selectedCard.classList.remove("selected");
+      const oldControls = selectedCard.querySelector(".sell-controls");
+      if (oldControls) oldControls.remove();
+    }
+
+    // Toggle
+    const isSelected = selectedCard === cardEl;
+    if (isSelected) {
+      selectedCard.classList.remove("selected");
+      const controls = selectedCard.querySelector(".sell-controls");
+      if (controls) controls.remove();
+      selectedCard = null;
+      return;
+    }
 
       selectedCard = cardEl;
       cardEl.classList.add("selected");
@@ -183,8 +187,8 @@ const { data, error } = await supabase
         const priceInput = controls.querySelector(".price-input");
         const price = parseInt(priceInput?.value);
 
-        if (!selectedCard || isNaN(price) || price <= 0) {
-          alert("Invalid price or card.");
+        if (!selectedCard || isNaN(price) || price <= 0 || !Number.isInteger(price)) {
+          alert("Invalid price. Must be a positive whole number.");
           return;
         }
 
