@@ -40,30 +40,32 @@ async function loadWallet() {
 
 
 async function loadListings() {
-const { data, error } = await supabase
-  .from("market_listings")
-  .select(`
-    id,
-    price,
-    is_sold,
-    card:card_id (
+  const { data, error } = await supabase
+    .from("market_listings")
+    .select(`
       id,
-      name
-    ),
-    seller:users!seller_id (
-      id,
-      profiles (
-        display_name
+      price,
+      is_sold,
+      card:card_id (
+        id,
+        name
+      ),
+      seller:users!seller_id (
+        id,
+        profiles (
+          display_name
+        )
       )
-    )
-  `)
-  .eq("is_sold", false)
-  .neq("seller_id", currentUser.id);
+    `)
+    .eq("is_sold", false)
+    .neq("seller_id", currentUser.id);
 
   if (error) {
     console.error("Failed to fetch listings", error);
     return;
   }
+
+  console.log("Listings returned:", data);
 
   const container = document.getElementById("market-grid");
   if (!container) {
@@ -75,10 +77,9 @@ const { data, error } = await supabase
 
   data.forEach((listing) => {
     const card = listing.card;
-    const sellerName = listing.seller.profiles?.display_name || "Unknown"
+    const sellerName = listing.seller?.profiles?.display_name || "Unknown";
     console.log("Seller Profile:", listing.seller);
 
-    // Create UI
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
 
@@ -98,7 +99,7 @@ const { data, error } = await supabase
     cardEl.appendChild(sellerDiv);
     cardEl.appendChild(priceDiv);
 
-    document.getElementById("market-grid").appendChild(cardEl);
+    container.appendChild(cardEl);
   });
 }
 
