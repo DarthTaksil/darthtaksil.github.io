@@ -13,7 +13,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  document.getElementById("market-username").textContent = currentUser.user_metadata.full_name || "Player";
+  document.getElementById("market-username").textContent = user = await getCurrentUser(user.display_name);
   await loadWallet();
   await loadListings();
   setupSellModal();

@@ -191,7 +191,7 @@ document.getElementById('modal-close').addEventListener('click', () => {
 // After user is verified
 function showUserInfo(user) {
   const meta = user.user_metadata || {};
-  const username = meta.full_name || meta.name || meta.preferred_username || 'Player';
+  const username = getCurrentUser(user.display_name);
   document.getElementById('dampe-user-name').textContent = username;
 }
 
