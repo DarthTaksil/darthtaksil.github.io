@@ -138,7 +138,7 @@ const { data, error } = await supabase
   }
 
   data.forEach((card) => {
-    const cardEl = document.createElement("div");
+    const cardEl = document.createElement("li");
     cardEl.className = "card-item";
     cardEl.dataset.cardId = card.card_id;
 
