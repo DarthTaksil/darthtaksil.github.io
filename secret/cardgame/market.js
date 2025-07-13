@@ -17,6 +17,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     currentUser.display_name || "Player";
     
   await loadWallet();
+  await loadYourListings();
   await loadListings();
   setupSellModal();
 });
@@ -36,11 +37,81 @@ async function loadWallet() {
 
 
 
+// Load user listings
+
+
+async function loadYourListings() {
+  const { data, error } = await supabase
+    .from("market_listings")
+    .select(`
+      id,
+      price,
+      card:card_id (
+        id,
+        name
+      )
+    `)
+    .eq("is_sold", false)
+    .eq("seller_id", currentUser.id);
+
+  if (error) {
+    console.error("Failed to load your listings:", error);
+    return;
+  }
+
+  const container = document.getElementById("your-listings-grid");
+  container.innerHTML = "";
+
+  data.forEach((listing) => {
+    const card = listing.card;
+
+    const cardEl = document.createElement("div");
+    cardEl.className = "market-card";
+
+    const img = document.createElement("img");
+    img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
+    img.alt = card.name;
+
+    const priceDiv = document.createElement("div");
+    priceDiv.className = "card-price";
+    priceDiv.textContent = `${listing.price} 🪙`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove Listing";
+    removeBtn.className = "remove-listing-btn";
+    removeBtn.addEventListener("click", async () => {
+      const confirmed = confirm("Remove this listing?");
+      if (!confirmed) return;
+
+      const { error } = await supabase
+        .from("market_listings")
+        .delete()
+        .eq("id", listing.id);
+
+      if (error) {
+        console.error("Failed to delete listing:", error);
+        alert("Could not remove listing.");
+      } else {
+        loadYourListings(); // Refresh
+        loadListings();     // Refresh global listings
+      }
+    });
+
+    cardEl.appendChild(img);
+    cardEl.appendChild(priceDiv);
+    cardEl.appendChild(removeBtn);
+
+    container.appendChild(cardEl);
+  });
+}
+
+
+
 // Load card listings from other users
 
 
 async function loadListings() {
-  // Step 1: Get market listings
+  // Get market listings
   const { data: listings, error: listingsError } = await supabase
     .from("market_listings")
     .select(`
@@ -61,10 +132,10 @@ async function loadListings() {
     return;
   }
 
-  // Step 2: Extract unique seller_ids
+  // Extract unique seller_ids
   const sellerIds = [...new Set(listings.map(listing => listing.seller_id))];
 
-  // Step 3: Fetch profiles
+  // Fetch profiles
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("user_id, display_name")
@@ -75,13 +146,13 @@ async function loadListings() {
     return;
   }
 
-  // Step 4: Create a quick lookup map
+  // Create a quick lookup map
   const sellerMap = {};
   profiles.forEach(profile => {
     sellerMap[profile.user_id] = profile.display_name;
   });
 
-  // Step 5: Render cards
+  // Render cards
   const container = document.getElementById("market-grid");
   container.innerHTML = "";
 
