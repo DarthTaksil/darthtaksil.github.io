@@ -1,4 +1,5 @@
 import { supabase } from './shared/supabaseConfig.js';
+import { getCurrentUser } from './shared/auth.js';
 
 window.supabaseClient = supabase;
 
