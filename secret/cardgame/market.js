@@ -140,13 +140,13 @@ const { data, error } = await supabase
   data.forEach((card) => {
     const cardEl = document.createElement("div");
     cardEl.className = "card-item";
-    cardEl.dataset.cardId = card.id;
-
-    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
-    img.alt = card.cards.name;
     cardEl.dataset.cardId = card.card_id;
 
-    cardEl.appendChild(img.src);
+    const img = document.createElement("img");
+    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
+    img.alt = card.cards.name;
+
+    cardEl.appendChild(img);
 
     cardEl.addEventListener("click", () => {
       // Deselect previous
