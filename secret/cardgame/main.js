@@ -135,6 +135,21 @@ function showLogin() {
   gameUI.style.display = 'none';
 }
 
+window.addEventListener("DOMContentLoaded", async () => {
+  currentUser = await getCurrentUser();
+  if (!currentUser) {
+    window.location.href = "/secret/cardgame/index.html";
+    return;
+  }
+
+  document.getElementById("display-name").textContent =
+    currentUser.display_name || "Player";
+
+  await loadWallet();
+  await loadListings();
+  setupSellModal();
+});
+
 async function showGame(user) {
   if (hasInitialized) return;
   hasInitialized = true;
@@ -142,9 +157,6 @@ async function showGame(user) {
   currentUser = user;
 
   const meta = user.user_metadata || {};
-
-  document.getElementById("display-name").textContent =
-  currentUser.display_name || "Player";
 
   authUI.style.display = 'none';
   gameUI.style.display = 'block';
