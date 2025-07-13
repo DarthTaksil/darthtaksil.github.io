@@ -435,6 +435,8 @@ const { data, error } = await supabase
 
         setTimeout(() => {
           loadOwnedCards();
+          loadYourListings();
+          loadListings();
         }, 350);
 
         setTimeout(() => {
