@@ -75,11 +75,11 @@ async function loadListings() {
     cardEl.className = "card-item";
 
     // Use card.id for dataset
-    cardEl.dataset.cardId = card.id;
+    cardEl.dataset.cardId = card.card_id;
 
     const img = document.createElement("img");
-    img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
-    img.alt = card.name;
+    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
+    img.alt = card.cards.name;
 
     cardEl.appendChild(img);
 
@@ -116,11 +116,18 @@ function setupSellModal() {
 let selectedCard = null;
 
 async function loadOwnedCards() {
-  const { data, error } = await supabase
-    .from("user_cards")
-    .select("card_id, quantity, cards ( id, name )")
-    .eq("user_id", currentUser.id)
-    .gt("quantity", 0);
+const { data, error } = await supabase
+  .from("user_cards")
+  .select(`
+    card_id,
+    quantity,
+    cards (
+      id,
+      name
+    )
+  `)
+  .eq("user_id", currentUser.id)
+  .gt("quantity", 0);
 
   const container = document.getElementById("sell-card-list");
   container.innerHTML = "";
@@ -135,9 +142,9 @@ async function loadOwnedCards() {
     cardEl.className = "card-item";
     cardEl.dataset.cardId = card.id;
 
-    const img = document.createElement("img");
-    img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
-    img.alt = card.name;
+    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
+    img.alt = card.cards.name;
+    cardEl.dataset.cardId = card.card_id;
 
     cardEl.appendChild(img);
 
