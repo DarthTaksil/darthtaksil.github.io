@@ -162,7 +162,7 @@ async function loadYourListings() {
 
 async function loadListings() {
   // Get market listings
-  const sellerMap = {};
+  let sellerMap = {};
   const { data: listings, error: listingsError } = await supabase
     .from("market_listings")
     .select(`
