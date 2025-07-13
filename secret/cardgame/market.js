@@ -75,7 +75,7 @@ const { data, error } = await supabase
 
   data.forEach((listing) => {
     const card = listing.card;
-    const sellerName = listing.seller?.profile?.display_name ?? "Unknown";
+    const sellerName = listing.seller.profiles?.display_name || "Unknown"
     console.log("Seller Profile:", listing.seller);
 
     // Create UI
