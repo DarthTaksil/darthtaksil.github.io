@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadMarketListings() {
   const { data, error } = await supabase
     .from("market_listings")
-    .select("id, card_id, price, seller_id, cards(name), users(username)")
+    .select('*, cards(*), seller:users!market_listings_seller_id_fkey(*)')
     .order("id", { ascending: false });
 
   if (error) {
