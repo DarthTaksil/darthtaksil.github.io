@@ -89,7 +89,7 @@ async function loadOwnedCards() {
     .select("id, name")
     .eq("owner_id", currentUser.id);
 
-  const container = document.getElementById("owned-card-list");
+  const container = document.getElementById("sell-card-list");
   container.innerHTML = "";
 
   if (error) {
