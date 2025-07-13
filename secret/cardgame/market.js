@@ -45,14 +45,17 @@ async function loadListings() {
     .select(`
       id,
       price,
+      is_sold,
       card:card_id (
         id,
         name
       ),
       seller:seller_id (
-        id
+        id,
+        display_name
       )
     `)
+    .eq("is_sold", false)
     .neq("seller_id", currentUser.id);
 
   if (error) {
@@ -68,24 +71,28 @@ async function loadListings() {
 
   container.innerHTML = "";
 
-  data.forEach((entry) => {
-    const card = entry.cards;  // shorthand for easier use
+  data.forEach((listing) => {
+    const card = listing.card;
+    const seller = listing.seller;
 
     const cardEl = document.createElement("div");
-    cardEl.className = "card-item";
-
-    // Use card.id for dataset
-    cardEl.dataset.cardId = card.card_id;
+    cardEl.className = "market-card";
 
     const img = document.createElement("img");
-    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
-    img.alt = card.cards.name;
+    img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
+    img.alt = card.name;
+
+    const sellerEl = document.createElement("div");
+    sellerEl.className = "card-seller";
+    sellerEl.textContent = `Seller: ${seller?.display_name || 'Unknown'}`;
+
+    const priceEl = document.createElement("div");
+    priceEl.className = "card-price";
+    priceEl.textContent = `${listing.price} 🪙`;
 
     cardEl.appendChild(img);
-
-    cardEl.addEventListener("click", () => {
-      // your existing click logic
-    });
+    cardEl.appendChild(sellerEl);
+    cardEl.appendChild(priceEl);
 
     container.appendChild(cardEl);
   });
