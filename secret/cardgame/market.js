@@ -75,47 +75,109 @@ function setupSellModal() {
 
   let selectedCard = null;
 
-  sellBtn.addEventListener("click", async () => {
-    sellCardList.innerHTML = "";
-    sellModalOverlay.classList.remove("hidden");
-    sellCardDetails.classList.add("hidden");
-    selectedCard = null;
-
+    async function loadOwnedCards() {
     const { data, error } = await supabase
-      .from("user_cards")
-      .select("card_id, card:card_id ( id, name )")
-      .eq("user_id", currentUser.id);
+        .from("cards")
+        .select("id, name")
+        .eq("owner_id", currentUser.id);
+
+    const container = document.getElementById("owned-card-list");
+    container.innerHTML = "";
 
     if (error) {
-      console.error("Error loading user cards", error);
-      return;
+        console.error("Failed to load cards:", error);
+        return;
     }
 
-    data.forEach((entry) => {
-      const li = document.createElement("li");
-      li.setAttribute("data-card-id", entry.card.id);
+    data.forEach((card) => {
+        const cardEl = document.createElement("div");
+        cardEl.className = "card-item";
+        cardEl.dataset.cardId = card.id;
 
-      const img = document.createElement("img");
-      img.src = `./cards/${String(entry.card.id).padStart(3, '0')}.png`;
-      img.alt = entry.card.name;
-      li.appendChild(img);
+        const img = document.createElement("img");
+        img.src = `./cards/${String(card.id).padStart(3, '0')}.png`;
+        img.alt = card.name;
 
-      li.addEventListener("click", () => {
-        if (selectedCard?.id === entry.card.id) {
-          li.classList.remove("selected");
-          selectedCard = null;
-          sellCardDetails.classList.add("hidden");
-        } else {
-          document.querySelectorAll("#sell-card-list li").forEach((el) => el.classList.remove("selected"));
-          li.classList.add("selected");
-          selectedCard = entry.card;
-          sellCardDetails.classList.remove("hidden");
+        cardEl.appendChild(img);
+
+        cardEl.addEventListener("click", () => {
+        // Deselect previous card if any
+        if (selectedCard && selectedCard !== cardEl) {
+            selectedCard.classList.remove("selected");
+            const oldControls = selectedCard.querySelector(".sell-controls");
+            if (oldControls) oldControls.remove();
         }
-      });
 
-      sellCardList.appendChild(li);
+        // Toggle selection
+        const isSelected = selectedCard === cardEl;
+        if (isSelected) {
+            selectedCard.classList.remove("selected");
+            const controls = selectedCard.querySelector(".sell-controls");
+            if (controls) controls.remove();
+            selectedCard = null;
+            return;
+        }
+
+        selectedCard = cardEl;
+        cardEl.classList.add("selected");
+
+        const controls = document.createElement("div");
+        controls.className = "sell-controls";
+        controls.innerHTML = `
+            <input type="number" placeholder="Price" min="1" />
+            <button class="list-btn">List Card</button>
+        `;
+        cardEl.appendChild(controls);
+
+        const listCardBtn = controls.querySelector(".list-btn");
+
+        listCardBtn.addEventListener("click", async () => {
+            const priceInput = selectedCard.querySelector("input");
+            const price = parseInt(priceInput?.value);
+            const listBtn = selectedCard.querySelector(".list-btn");
+
+            if (!selectedCard || isNaN(price) || price <= 0) {
+            alert("Invalid price or card.");
+            return;
+            }
+
+            listBtn.disabled = true;
+            listBtn.style.opacity = "0.5";
+
+            const cardId = selectedCard.dataset.cardId;
+
+            const { error } = await supabase.from("market_listings").insert([
+            {
+                card_id: cardId,
+                seller_id: currentUser.id,
+                price: price,
+            },
+            ]);
+
+            if (error) {
+            alert("Failed to list card.");
+            console.error(error);
+            listBtn.disabled = false;
+            listBtn.style.opacity = "1";
+            return;
+            }
+
+            setTimeout(() => {
+            loadOwnedCards();
+            }, 350);
+
+            setTimeout(() => {
+            priceInput.value = "";
+            listBtn.disabled = false;
+            listBtn.style.opacity = "1";
+            }, 400);
+        });
+        });
+
+        container.appendChild(cardEl);
     });
-  });
+    }
+
 
     listCardBtn.addEventListener("click", async () => {
         if (!selectedCard) return;
@@ -170,3 +232,4 @@ function setupSellModal() {
     sellModalOverlay.classList.add("hidden");
   });
 }
+
