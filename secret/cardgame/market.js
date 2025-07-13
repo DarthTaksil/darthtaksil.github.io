@@ -231,6 +231,7 @@ const { data, error } = await supabase
           return;
         }
 
+        let updateError = null;
         const newQty = existingEntry.quantity - 1;
 
         // If new quantity is 0, delete the row
@@ -247,11 +248,13 @@ const { data, error } = await supabase
           }
         } else {
           // Otherwise, just update quantity
-          const { error: updateError } = await supabase
+          const result = await supabase
             .from("user_cards")
             .update({ quantity: newQty })
             .eq("user_id", currentUser.id)
             .eq("card_id", parseInt(cardId));
+
+            updateError = result.error;
 
           if (updateError) {
             console.error("Failed to update card quantity:", updateError);
