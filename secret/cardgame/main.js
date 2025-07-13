@@ -282,7 +282,7 @@ async function checkBoostStatus() {
 async function claimBoostPack() {
   const cards = await getRandomCardPack();
   await giveCardsToUser(cards);
-  boostButton.disabled = false;
+  boostButton.disabled = true;
 
   // Fetches current wallet balance
   const { data: userData, error } = await supabase
@@ -293,7 +293,7 @@ async function claimBoostPack() {
 
   if (error) {
     console.error("Failed to fetch user wallet:", error);
-    boostButton.disabled = true;
+    boostButton.disabled = false;
     return;
   }
 
