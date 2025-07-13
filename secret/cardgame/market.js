@@ -142,11 +142,11 @@ const { data, error } = await supabase
     cardEl.className = "card-item";
     cardEl.dataset.cardId = card.id;
 
-    img = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
+    img.src = `./cards/${String(card.cards.id).padStart(3, '0')}.png`;
     img.alt = card.cards.name;
     cardEl.dataset.cardId = card.card_id;
 
-    cardEl.appendChild(img);
+    cardEl.appendChild(img.src);
 
     cardEl.addEventListener("click", () => {
       // Deselect previous
