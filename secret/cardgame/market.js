@@ -51,6 +51,7 @@ async function loadListings() {
       name
     ),
     seller:users!seller_id (
+      id,
       profile:profiles (
         display_name
       )
@@ -75,6 +76,7 @@ async function loadListings() {
   data.forEach((listing) => {
     const card = listing.card;
     const sellerName = listing.seller?.profile?.display_name ?? "Unknown";
+    console.log("Seller Profile:", listing.seller);
 
     // Create UI
     const cardEl = document.createElement("div");
