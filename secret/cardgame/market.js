@@ -41,22 +41,24 @@ async function loadWallet() {
 
 async function loadListings() {
   const { data, error } = await supabase
-    .from("market_listings")
-    .select(`
+  .from("market_listings")
+  .select(`
+    id,
+    price,
+    is_sold,
+    card:card_id (
       id,
-      price,
-      is_sold,
-      card:card_id (
-        id,
-        name
-      ),
-      seller:seller_id (
-        id,
+      name
+    ),
+    seller:seller_id (
+      id,
+      seller:profiles!seller_id (
         display_name
       )
-    `)
-    .eq("is_sold", false)
-    .neq("seller_id", currentUser.id);
+    )
+  `)
+  .eq("is_sold", false)
+  .neq("seller_id", currentUser.id);
 
   if (error) {
     console.error("Failed to fetch listings", error);
@@ -73,7 +75,7 @@ async function loadListings() {
 
   data.forEach((listing) => {
     const card = listing.card;
-    const seller = listing.seller;
+    const seller = listing.seller?.profile?.display_name || "Unknown";
 
     const cardEl = document.createElement("div");
     cardEl.className = "market-card";
