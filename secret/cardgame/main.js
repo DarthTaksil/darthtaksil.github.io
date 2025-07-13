@@ -283,6 +283,7 @@ async function claimBoostPack() {
   const cards = await getRandomCardPack();
   await giveCardsToUser(cards);
   boostButton.disabled = true;
+  boostButton.style.opacity = 0.5;
 
   // Fetches current wallet balance
   const { data: userData, error } = await supabase
