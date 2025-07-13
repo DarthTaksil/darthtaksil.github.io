@@ -226,6 +226,11 @@ async function loadListings() {
     cardEl.appendChild(priceDiv);
 
     container.appendChild(cardEl);
+
+    cardEl.addEventListener("click", () => {
+      openBuyModal(listing, card, sellerName);
+    });
+
   });
 }
 
@@ -450,3 +455,107 @@ const { data, error } = await supabase
   });
 }
 
+function openBuyModal(listing, card, sellerName) {
+  const overlay = document.getElementById("buy-modal-overlay");
+  const modal = document.getElementById("buy-modal");
+  const details = document.getElementById("buy-card-details");
+
+  details.innerHTML = `
+    <div class="buy-card-info">
+      <img src="./cards/${String(card.id).padStart(3, '0')}.png" alt="${card.name}" />
+      <div class="info-block">
+        <p><strong>Card:</strong> ${card.name}</p>
+        <p><strong>Seller:</strong> ${sellerName}</p>
+        <p><strong>Price:</strong> ${listing.price} 🪙</p>
+        <button id="confirm-buy-btn" class="buy-button">Buy This Card</button>
+      </div>
+    </div>
+  `;
+
+  overlay.classList.remove("hidden");
+  modal.classList.remove("hidden");
+
+  document.getElementById("confirm-buy-btn").addEventListener("click", () =>
+    handleBuy(listing)
+  );
+
+  document.getElementById("buy-modal-close").addEventListener("click", () => {
+    overlay.classList.add("hidden");
+    modal.classList.add("hidden");
+  });
+}
+
+async function handleBuy(listing) {
+  // Get buyer wallet
+  const { data: walletData, error: walletError } = await supabase
+    .from("users")
+    .select("wallet")
+    .eq("id", currentUser.id)
+    .single();
+
+  if (walletError || walletData.wallet < listing.price) {
+    alert("Insufficient Clint Coin.");
+    return;
+  }
+
+  // 1. Deduct buyer's wallet
+  const { error: deductError } = await supabase
+    .from("users")
+    .update({ wallet: walletData.wallet - listing.price })
+    .eq("id", currentUser.id);
+
+  if (deductError) {
+    alert("Transaction failed at wallet deduction.");
+    return;
+  }
+
+  // 2. Update listing as sold
+  const { error: soldError } = await supabase
+    .from("market_listings")
+    .update({
+      is_sold: true,
+      buyer_id: currentUser.id,
+      sold_at: new Date().toISOString()
+    })
+    .eq("id", listing.id);
+
+  if (soldError) {
+    alert("Transaction failed at marking listing sold.");
+    return;
+  }
+
+  // 3. Give card to buyer (insert/update user_cards)
+  const { data: userCard, error: userCardError } = await supabase
+    .from("user_cards")
+    .select("quantity")
+    .eq("user_id", currentUser.id)
+    .eq("card_id", listing.card.id)
+    .maybeSingle();
+
+  if (userCardError) {
+    alert("Purchase succeeded, but failed to deliver card.");
+    return;
+  }
+
+  if (userCard) {
+    await supabase
+      .from("user_cards")
+      .update({ quantity: userCard.quantity + 1 })
+      .eq("user_id", currentUser.id)
+      .eq("card_id", listing.card.id);
+  } else {
+    await supabase.from("user_cards").insert({
+      user_id: currentUser.id,
+      card_id: listing.card.id,
+      quantity: 1,
+    });
+  }
+
+  alert("Purchase successful!");
+  document.getElementById("buy-modal-overlay").classList.add("hidden");
+
+  // Refresh the market
+  loadWallet();
+  loadListings();
+  loadYourListings();
+}
