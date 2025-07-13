@@ -217,11 +217,47 @@ const { data, error } = await supabase
         selectedCard.remove();
         selectedCard = null;
 
-        const { error: updateError } = await supabase
+        // Fetch current quantity
+        const { data: existingEntry, error: fetchError } = await supabase
           .from("user_cards")
-          .update({ quantity: supabase.literal("quantity - 1") })
+          .select("quantity")
           .eq("user_id", currentUser.id)
-          .eq("card_id", parseInt(cardId));
+          .eq("card_id", parseInt(cardId))
+          .maybeSingle();
+
+        if (fetchError) {
+          console.error("Error fetching card quantity:", fetchError);
+          alert("Could not update your card inventory.");
+          return;
+        }
+
+        const newQty = existingEntry.quantity - 1;
+
+        // If new quantity is 0, delete the row
+        if (newQty <= 0) {
+          const { error: deleteError } = await supabase
+            .from("user_cards")
+            .delete()
+            .eq("user_id", currentUser.id)
+            .eq("card_id", parseInt(cardId));
+
+          if (deleteError) {
+            console.error("Failed to delete card:", deleteError);
+            alert("Failed to update your inventory.");
+          }
+        } else {
+          // Otherwise, just update quantity
+          const { error: updateError } = await supabase
+            .from("user_cards")
+            .update({ quantity: newQty })
+            .eq("user_id", currentUser.id)
+            .eq("card_id", parseInt(cardId));
+
+          if (updateError) {
+            console.error("Failed to update card quantity:", updateError);
+            alert("Failed to update your inventory.");
+          }
+        }
 
         if (updateError) {
           console.error("Failed to reduce card quantity:", updateError);
