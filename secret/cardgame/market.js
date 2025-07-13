@@ -117,53 +117,54 @@ function setupSellModal() {
     });
   });
 
-  listCardBtn.addEventListener("click", async () => {
-    const price = parseInt(priceInput.value);
-    if (!selectedCard || isNaN(price) || price <= 0) {
-      alert("Invalid price or card.");
-      return;
-    }
+    listCardBtn.addEventListener("click", async () => {
+        if (!selectedCard) return;
 
-    const { error: listingError } = await supabase
-      .from("market_listings")
-      .insert([{
-        card_id: selectedCard.id,
-        seller_id: currentUser.id,
-        price: price,
-        buyer_id: null,
-      }]);
+        const priceInput = selectedCard.querySelector("input");
+        const listBtn = selectedCard.querySelector("button");
 
-    if (listingError) {
-      console.error("Error listing card:", listingError);
-      alert("Failed to list card.");
-      return;
-    }
+        const price = parseInt(priceInput?.value);
+        if (isNaN(price) || price <= 0) {
+            alert("Invalid price.");
+            return;
+        }
 
-    // Remove card from user inventory
-    const { error: deleteError } = await supabase
-      .from("user_cards")
-      .delete()
-      .match({
-        card_id: selectedCard.id,
-        user_id: currentUser.id,
-      });
+        // Disable the button and gray it out
+        listBtn.disabled = true;
+        listBtn.style.opacity = "0.5";
+        listBtn.style.pointerEvents = "none";
 
-    if (deleteError) {
-      console.warn("Listing succeeded, but failed to remove card from inventory:", deleteError);
-    }
+        // Submit to Supabase
+        const { error } = await supabase.from("market_listings").insert([
+            {
+            card_id: selectedCard.dataset.cardId,
+            seller_id: currentUser.id,
+            price: price,
+            },
+        ]);
 
-    // Remove card from DOM list
-    const selectedLi = sellCardList.querySelector(`li[data-card-id="${selectedCard.id}"]`);
-    if (selectedLi) selectedLi.remove();
+        if (error) {
+            alert("Failed to list card.");
+            console.error(error);
+            listBtn.disabled = false;
+            listBtn.style.opacity = "1";
+            listBtn.style.pointerEvents = "auto";
+            return;
+        }
 
-    selectedCard = null;
-    sellCardDetails.classList.add("hidden");
-    alert(`Card listed for ${price} Clint Coins!`);
-    sellModalOverlay.classList.add("hidden");
+        // Schedule card grid refresh
+        setTimeout(() => {
+            loadOwnedCards(); // ✅ refresh the card grid
+        }, 350);
 
-    await loadWallet();
-    await loadListings();
-  });
+        // Clear price and unlock button after 400ms
+        setTimeout(() => {
+            priceInput.value = "";
+            listBtn.disabled = false;
+            listBtn.style.opacity = "1";
+            listBtn.style.pointerEvents = "auto";
+        }, 400);
+    });
 
   closeBtn.addEventListener("click", () => {
     sellModalOverlay.classList.add("hidden");
