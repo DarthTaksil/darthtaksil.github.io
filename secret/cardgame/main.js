@@ -30,7 +30,7 @@ document.getElementById('toggle-owned').addEventListener('click', () => {
 
   const toggleButton = document.getElementById('toggle-owned');
   toggleButton.classList.toggle('active', toggleOwnedOnly);
-  toggleButton.textContent = toggleOwnedOnly ? 'Show All Cards' : 'Only Show Owned';
+  toggleButton.textContent = toggleOwnedOnly ? 'SORT: Show All Cards' : 'SORT: Only Show Owned';
 
   renderCardGrid();
 });
