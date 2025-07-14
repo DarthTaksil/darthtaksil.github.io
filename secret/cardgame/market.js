@@ -3,6 +3,7 @@
 import { getCurrentUser } from './shared/auth.js';
 import { supabase } from './shared/supabaseConfig.js';
 
+let sellerMap = {};
 let currentUser = null;
 
 // On page load
@@ -162,7 +163,6 @@ async function loadYourListings() {
 
 async function loadListings() {
   // Get market listings
-  let sellerMap = {};
   const { data: listings, error: listingsError } = await supabase
     .from("market_listings")
     .select(`
