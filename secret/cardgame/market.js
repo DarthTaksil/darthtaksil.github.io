@@ -549,14 +549,35 @@ async function openBuyModal(listing) {
   document.getElementById("buy-listed-time").textContent = timeSince(new Date(listing.created_at));
   document.getElementById("buy-card-price").textContent = `${listing.price} 🪙`;
 
-  const confirmBox = document.getElementById("buy-confirmation");
-  document.getElementById("buy-confirm-btn").onclick = () => confirmBox.classList.remove("hidden");
-  document.getElementById("buy-no-btn").onclick = () => confirmBox.classList.add("hidden");
-  document.getElementById("buy-yes-btn").onclick = () => {
-    confirmBox.classList.add("hidden");
-    handleBuy(listing);
-  };
+  function setupHoldToBuy(listing) {
+    const holdBtn = document.getElementById("hold-buy-btn");
+    const fillBar = holdBtn.querySelector(".fill-bar");
+    let holdTimeout, startTime;
 
+    const holdDuration = 3000; // 3 seconds
+
+    function resetHold() {
+      clearTimeout(holdTimeout);
+      fillBar.style.transition = "width 0.3s";
+      fillBar.style.width = "0%";
+    }
+
+    holdBtn.onmousedown = () => {
+      startTime = Date.now();
+      fillBar.style.transition = `width ${holdDuration}ms linear`;
+      fillBar.style.width = "100%";
+
+      holdTimeout = setTimeout(() => {
+        // Time passed, trigger purchase
+        handleBuy(listing);
+      }, holdDuration);
+    };
+
+    holdBtn.onmouseup = resetHold;
+    holdBtn.onmouseleave = resetHold;
+  }
+
+  setupHoldToBuy(listing);
   await loadSimilarListings(listing.card.id, listing.id);
 }
 
