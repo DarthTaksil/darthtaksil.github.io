@@ -170,6 +170,7 @@ async function loadListings() {
       price,
       is_sold,
       seller_id,
+      created_at,
       card:card_id (
         id,
         name
