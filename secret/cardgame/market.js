@@ -296,6 +296,13 @@ const { data, error } = await supabase
 
     cardEl.appendChild(img);
 
+    if (card.quantity > 1) {
+      const quantityBadge = document.createElement("div");
+      quantityBadge.className = "quantity-badge";
+      quantityBadge.textContent = `x${card.quantity}`;
+      cardEl.appendChild(quantityBadge);
+    }
+
   cardEl.addEventListener("click", (e) => {
     if (e.target.closest(".sell-controls")) {
       return; // Ignore clicks inside sell-controls
