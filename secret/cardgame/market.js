@@ -443,10 +443,8 @@ const { data, error } = await supabase
           alert("Failed to update your card inventory.");
         }
 
-        setTimeout(() => {
-          loadYourListings();
-          loadListings();
-        }, 350);
+        await loadYourListings();
+        await loadListings();
 
         setTimeout(() => {
           priceInput.value = "";
