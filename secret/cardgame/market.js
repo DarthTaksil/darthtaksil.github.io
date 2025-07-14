@@ -560,7 +560,7 @@ async function openBuyModal(listing) {
     const fillBar = holdBtn.querySelector(".fill-bar");
     let holdTimeout, startTime;
 
-    const holdDuration = 3000; // 3 seconds
+    const holdDuration = 1500; // 1.5 seconds
 
     function resetHold() {
       clearTimeout(holdTimeout);
@@ -611,6 +611,7 @@ async function loadSimilarListings(cardId, excludeListingId) {
       id,
       price,
       seller_id,
+      created_at,
       card:card_id (
         id,
         name
