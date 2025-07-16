@@ -13,7 +13,7 @@ https://youtu.be/p1SDux2uixk
 ---
 
 # Adult 
-Child Section of tricks.
+Adult Section of tricks.
 
 ---
 
