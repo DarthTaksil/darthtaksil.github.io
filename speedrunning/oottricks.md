@@ -12,6 +12,11 @@ https://youtu.be/p1SDux2uixk
 
 ---
 
+## Fire Storage
+https://youtu.be/0D5G0yVxw_s
+
+---
+
 # Adult 
 Adult Section of tricks.
 
