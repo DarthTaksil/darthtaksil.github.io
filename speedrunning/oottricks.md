@@ -31,4 +31,8 @@ https://youtu.be/JI3v6sxK-kM
 https://youtu.be/BiPXEn4OdXE
 https://youtu.be/_vjdx-H5a-c
 
+## Spirit Temple Boss Key Skip
+> Need Hover Boots / Hammer / Hookshot*
+https://youtu.be/NZd_KXhK2L0
+
 ---
