@@ -28,5 +28,14 @@ const goldVideoList = [
     "yQ2XB7xdIoc",
     "G8QQD_r49YI",
     "-q0pS-Ef1YA",
-    "XzWm3s6DOkw"
+    "XzWm3s6DOkw",
+    "FROlD9bkQs8",
+    "4ZPP3LB42MQ",
+    "LhVstUrmax4",
+    "zs2i_VOSPwM",
+    "221eBQi0cvU",
+    "II-vfgiPh_c",
+    "A169xCORhBg",
+    "zg2uJ7qB9H4",
+    "Xnf6dxlF7Gc"
 ];
